@@ -603,7 +603,7 @@ endif
 #----------------------------------------------------------------------
 # 16. Grid Options
 
-WANTGRID = #true
+WANTGRID ?= #true
 
 ifeq ($(strip ${WANTHADRONS}), true)
   WANTGRID = true

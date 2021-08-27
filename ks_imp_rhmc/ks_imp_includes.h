@@ -57,7 +57,8 @@ int readin(int prompt);
 
 enum int_alg_t { INT_LEAPFROG, INT_OMELYAN, INT_2EPS_3TO1, INT_2EPS_2TO1, 
                  INT_2G1F, INT_3G1F, INT_5G1F, INT_6G1F, INT_4MN4FP, INT_4MN5FV, INT_FOURSTEP, 
-		 INT_PLAY };
+                 INT_PQPQP,
+                 INT_PLAY };
 
 /* Set default integration algorithm */
 #ifndef INT_ALG
@@ -118,6 +119,24 @@ double d_action_rhmc(su3_vector **multi_x, su3_vector *sumvec );
 void gauge_field_copy(field_offset src,field_offset dest);
 double fermion_action( su3_vector **multi_x, su3_vector *sumvec );
 double hmom_action(void);
+
+/* pqpqp_force_gradient.c */
+void update_u_inner_qpqpq( Real tau, int steps, Real lambda);
+void update_u_inner_pqpqp( Real tau, int steps, Real lambda);
+int  force_gradient( Real eps_t, Real eps_ttt, su3_vector **multi_x );
+void copy_gauge_field(su3_matrix *linkcopyXUP,
+                      su3_matrix *linkcopyYUP,
+                      su3_matrix *linkcopyZUP,
+                      su3_matrix *linkcopyTUP);
+void restore_gauge_field(su3_matrix *linkcopyXUP,
+                         su3_matrix *linkcopyYUP,
+                         su3_matrix *linkcopyZUP,
+                         su3_matrix *linkcopyTUP);
+void zero_momentum();
+void copy_momentum(anti_hermitmat *momentumcopy);
+void restore_momentum(anti_hermitmat *momentumcopy);
+
+
 
 #endif /* KS_IMP_INCLUDES_H_ */
 

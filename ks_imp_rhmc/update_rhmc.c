@@ -172,6 +172,10 @@ int update() {
   int iphi, int_alg, inaik, jphi, n;
   Real lambda, alpha, beta; // parameters in integration algorithms
   imp_ferm_links_t** fn;
+  // params for PQPQP
+  Real inner_lambda, outer_lambda;
+  int  inner_steps;
+
 
   int_alg = INT_ALG;
   switch(int_alg){
@@ -213,7 +217,38 @@ int update() {
       n_multi_x = max_rat_order;
       for(j=0,i=0; i<n_pseudo; i++){j+=rparam[i].MD.order;}
       if(j>n_multi_x)n_multi_x=j; // Fermion force needs all multi_x at once in this algorithm
+      break;
+    case INT_PQPQP:
+        node0_printf("PQPQP Integrator: steps= %d eps= %e\n", steps, epsilon);
+        //if (steps %2 != 0 ){
+        //    node0_printf("BONEHEAD! need even number of steps\n"); terminate(0);
+        //}
+        if(getenv("OUTER_LAMBDA")) {
+            outer_lambda = atof(strdup(getenv("OUTER_LAMBDA")));
+            node0_printf("             ENV declared OUTER_LAMBDA = %e\n", outer_lambda);
+        } else {
+            outer_lambda = 1./6; // this eliminates the (1 - 6 lam) {T,{S,{T}} dt**2 term
+            node0_printf("             default OUTER_LAMBDA = %e\n", outer_lambda);
+        }
+        if(getenv("INNER_LAMBDA")){
+            inner_lambda = atof(strdup(getenv("INNER_LAMBDA")));
+            node0_printf("             ENV declared INNER_LAMBDA = %e\n", inner_lambda);
+        } else {
+            inner_lambda = 1./6;
+            node0_printf("             default INNER_LAMBDA = %e\n", inner_lambda);            
+        }
+        if(getenv("INNER_STEPS")){
+            inner_steps = atof(strdup(getenv("INNER_STEPS")));
+            node0_printf("             ENV declared INNER_STEPS = %d\n", inner_steps);
+        } else {
+            inner_steps = 1;
+            node0_printf("             default INNER_STEPS = %d\n", inner_steps);
+        }
+        n_multi_x = max_rat_order;
+        for(j=0,i=0; i<n_pseudo; i++){j+=rparam[i].MD.order;}
+        if(j>n_multi_x)n_multi_x=j; // Fermion force needs all multi_x at once in this algorithm
     break;
+
     case INT_5G1F:
       alpha = 0.1; beta = 0.1;
       node0_printf("Omelyan integration, 5 gauge for one 1 fermion step, steps= %d eps= %e alpha= %e beta= %e\n",
@@ -543,6 +578,33 @@ int update() {
 #endif /* MILC_GLOBAL_DEBUG */
         }	/* end loop over microcanonical steps */
     break;
+
+    case INT_PQPQP:
+        node0_printf("RUN PQPQP integrator\n");
+        for(step=1; step <= steps; step+=1){
+            /* NOTE since we are chaining these together with a ferm
+            as the first and last step, and update_h_ferm only updates
+            the momentum, we can double the length of the last step and
+            skip the first, except the first and last step 
+
+            P Q_inner P Q_inner P
+            */
+            if(step == 1){
+                iters += update_h_fermion( epsilon*0.5*outer_lambda, multi_x);
+            }
+            update_u_inner_qpqpq         ( epsilon, inner_steps, inner_lambda);
+            iters += update_h_fermion    ( epsilon*(2.0-outer_lambda), multi_x);
+            update_u_inner_qpqpq         ( epsilon, inner_steps, inner_lambda);
+            if(step == steps){
+                iters += update_h_fermion( epsilon*0.5*outer_lambda, multi_x);
+            } else {
+                iters += update_h_fermion( epsilon*outer_lambda, multi_x);
+            }
+            /* reunitarize the gauge field */
+            reunitarize_ks();
+        } /* end loop over microcanonical steps */        
+    break;
+
     case INT_5G1F:
         /* do "steps" microcanonical steps (one "step" = one force evaluation)"  */
         for(step=2; step <= steps; step+=2){

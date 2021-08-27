@@ -142,7 +142,7 @@ int force_gradient( Real eps_t, Real eps_ttt, su3_vector **multi_x ){
     // eps_t = dt * (1-2lam)
     // eps_ttt = dt**3 /72 * 2
     // we need to compute the gauge and ferm contributions to the momentum
-    iters += update_h_rhmc( eps_ttt / eps_t );
+    iters += update_h_rhmc( eps_ttt / eps_t, multi_x);
 
     // given the momentum kick (force), update the links to U'
     update_u( 1.0 );
@@ -152,7 +152,7 @@ int force_gradient( Real eps_t, Real eps_ttt, su3_vector **multi_x ){
 
     // add our kick to the momentum
     // eps_t = dt * (1-2lam)
-    iters += update_h_rhmc( eps_t );
+    iters += update_h_rhmc( eps_t, multi_x );
 
     // restore the gauge field
     restore_gauge_field(linkcopyXUP, linkcopyYUP, linkcopyZUP, linkcopyTUP);
