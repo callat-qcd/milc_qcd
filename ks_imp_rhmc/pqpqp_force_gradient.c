@@ -11,7 +11,7 @@
 // These inner QPQPQ and PQPQP functions only update the gauge fields
 // They are for doing multi-steps for the gauge field per step for the fermions
 
-void update_u_inner_qpqpq( Real tau, int steps, Real lambda, int q_inner) {
+void update_inner_qpqpq( Real tau, int steps, Real lambda, int q_inner) {
 
     Real dtau = tau / steps;
 
@@ -40,23 +40,46 @@ void update_u_inner_qpqpq( Real tau, int steps, Real lambda, int q_inner) {
     }
 }
 
-void update_u_inner_pqpqp( Real tau, int steps, Real lambda) {
+void update_inner_pqpqp( Real tau, int steps, Real lambda, int q_inner) {
     Real dtau = tau / steps;
-    /* do "steps" microcanonical steps (one "step" = one force evaluation)"  */
-    for(int step=1; step <= steps; step++){
-        //only do first step the first itteration through loop
-        if(step == 1){
-            update_h_gauge( dtau *lambda );
+
+    if(q_inner == 0){
+        /* regular P_Gauge then Q update, no need for inner_steps or lambda */
+        update_h_gauge(tau);
+        update_u      (tau);
+    } else if(q_inner == 1){
+        /* do a PQP update in a loop of inner steps */
+        for(int step=1; step <= steps; step++){
+            if(step == 1){//only do first step the first itteration through loop
+                update_h_gauge( 0.5 * dtau );
+            }
+            update_u          (       dtau );
+            // double the last step to make up for the first, except for the last iteration
+            if(step == steps){
+                update_h_gauge( 0.5 * dtau );
+            } else{
+                update_h_gauge(       dtau );
+            }
         }
-        update_u          ( dtau *0.5 );
-        update_h_gauge    ( dtau *(1-2.*lambda) );
-        update_u          ( dtau *0.5 );
-        // double the last step to make up for the first, except for the last iteration
-        if(step == steps){
-            update_h_gauge  ( dtau *lambda );
-        } else{
-            update_h_gauge  ( dtau *2.0*lambda );
+    } else if(q_inner == 2){
+        for(int step=1; step <= steps; step++){
+            //only do first step the first itteration through loop
+            if(step == 1){
+                update_h_gauge( dtau *lambda );
+            }
+            update_u          ( dtau *0.5 );
+            update_h_gauge    ( dtau *(1-2.*lambda) );
+            update_u          ( dtau *0.5 );
+            // double the last step to make up for the first, except for the last iteration
+            if(step == steps){
+                update_h_gauge  ( dtau *lambda );
+            } else{
+                update_h_gauge  ( dtau *2.0*lambda );
+            }
         }
+    } else {
+        node0_printf("The q_inner must be 0 (Q), 1 (QPQ) or 2 (QPQPQ)\n");
+        terminate(1);
     }
 }
 

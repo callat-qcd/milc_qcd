@@ -589,23 +589,29 @@ int update() {
     case INT_PQPQP:
         node0_printf("RUN PQPQP integrator\n");
         for(step=1; step <= steps; step+=1){
-            /* NOTE since we are chaining these together with a ferm
-            as the first and last step, and update_h_ferm only updates
-            the momentum, we can double the length of the last step and
-            skip the first, except the first and last step 
-
+            /*
             PQPQP = P Q_inner P Q_inner P
+            P does both the Fermion and Gauge force
+            Q_inner will do one of 
+              Q, QPQ, QPQPQ
+            where these P only update the gauge force
+
+            One "step" brings the MD forward by epsilon
+
+            NOTE: since we are chaining these together with a ferm as the first and last 
+            step, and update_h_ferm only updates the momentum, we can double the length 
+            of the last step and skip the first, except the first and last step 
             */
             if(step == 1){
-                iters += update_h_fermion( epsilon*0.5*outer_lambda, multi_x);
+                iters += update_h_fermion(            outer_lambda * epsilon, multi_x);
             }
-            update_u_inner_qpqpq         ( epsilon, inner_steps, inner_lambda, q_inner);
-            iters += update_h_fermion    ( epsilon*(2.0-outer_lambda), multi_x);
-            update_u_inner_qpqpq         ( epsilon, inner_steps, inner_lambda, q_inner);
+            update_inner_pqpqp           (                     0.5 * epsilon, inner_steps, inner_lambda, q_inner);
+            iters += update_h_fermion    ( (1.0 -2.0*outer_lambda) * epsilon, multi_x);
+            update_inner_pqpqp           (                     0.5 * epsilon, inner_steps, inner_lambda, q_inner);
             if(step == steps){
-                iters += update_h_fermion( epsilon*0.5*outer_lambda, multi_x);
+                iters += update_h_fermion(            outer_lambda * epsilon, multi_x);
             } else {
-                iters += update_h_fermion( epsilon*outer_lambda, multi_x);
+                iters += update_h_fermion(      2.0 * outer_lambda * epsilon, multi_x);
             }
             /* reunitarize the gauge field */
             reunitarize_ks();

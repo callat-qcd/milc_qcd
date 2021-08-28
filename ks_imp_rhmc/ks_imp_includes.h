@@ -122,8 +122,8 @@ double fermion_action( su3_vector **multi_x, su3_vector *sumvec );
 double hmom_action(void);
 
 /* pqpqp_force_gradient.c */
-void update_u_inner_qpqpq( Real tau, int steps, Real lambda, int q_inner);
-void update_u_inner_pqpqp( Real tau, int steps, Real lambda);
+void update_inner_qpqpq( Real tau, int steps, Real lambda, int q_inner);
+void update_inner_pqpqp( Real tau, int steps, Real lambda, int q_inner);
 int  force_gradient( Real eps_t, Real eps_ttt, su3_vector **multi_x );
 void copy_gauge_field(su3_matrix *linkcopyXUP,
                       su3_matrix *linkcopyYUP,
