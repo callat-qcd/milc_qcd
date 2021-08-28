@@ -174,7 +174,7 @@ int update() {
   imp_ferm_links_t** fn;
   // params for PQPQP
   Real inner_lambda, outer_lambda;
-  int  inner_steps;
+  int  inner_steps, q_inner;
 
 
   int_alg = INT_ALG;
@@ -243,6 +243,13 @@ int update() {
         } else {
             inner_steps = 1;
             node0_printf("             default INNER_STEPS = %d\n", inner_steps);
+        }
+        if(getenv("Q_INNER")){
+            q_inner = atof(strdup(getenv("Q_INNER")));
+            node0_printf("             ENV declared Q_INNER type = %d\n", q_inner);
+        } else {
+            q_inner = 0;
+            node0_printf("             default Q_INNER type = %d\n", q_inner);
         }
         n_multi_x = max_rat_order;
         for(j=0,i=0; i<n_pseudo; i++){j+=rparam[i].MD.order;}
@@ -587,14 +594,14 @@ int update() {
             the momentum, we can double the length of the last step and
             skip the first, except the first and last step 
 
-            P Q_inner P Q_inner P
+            PQPQP = P Q_inner P Q_inner P
             */
             if(step == 1){
                 iters += update_h_fermion( epsilon*0.5*outer_lambda, multi_x);
             }
-            update_u_inner_qpqpq         ( epsilon, inner_steps, inner_lambda);
+            update_u_inner_qpqpq         ( epsilon, inner_steps, inner_lambda, q_inner);
             iters += update_h_fermion    ( epsilon*(2.0-outer_lambda), multi_x);
-            update_u_inner_qpqpq         ( epsilon, inner_steps, inner_lambda);
+            update_u_inner_qpqpq         ( epsilon, inner_steps, inner_lambda, q_inner);
             if(step == steps){
                 iters += update_h_fermion( epsilon*0.5*outer_lambda, multi_x);
             } else {

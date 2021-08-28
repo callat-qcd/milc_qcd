@@ -65,6 +65,7 @@ enum int_alg_t { INT_LEAPFROG, INT_OMELYAN, INT_2EPS_3TO1, INT_2EPS_2TO1,
 #define INT_ALG INT_OMELYAN
 #endif
 
+
 int update(void);
 const char *ks_int_alg_opt_chr( void );
 
@@ -121,7 +122,7 @@ double fermion_action( su3_vector **multi_x, su3_vector *sumvec );
 double hmom_action(void);
 
 /* pqpqp_force_gradient.c */
-void update_u_inner_qpqpq( Real tau, int steps, Real lambda);
+void update_u_inner_qpqpq( Real tau, int steps, Real lambda, int q_inner);
 void update_u_inner_pqpqp( Real tau, int steps, Real lambda);
 int  force_gradient( Real eps_t, Real eps_ttt, su3_vector **multi_x );
 void copy_gauge_field(su3_matrix *linkcopyXUP,

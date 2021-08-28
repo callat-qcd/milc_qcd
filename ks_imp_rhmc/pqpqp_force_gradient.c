@@ -11,16 +11,32 @@
 // These inner QPQPQ and PQPQP functions only update the gauge fields
 // They are for doing multi-steps for the gauge field per step for the fermions
 
-void update_u_inner_qpqpq( Real tau, int steps, Real lambda) {
+void update_u_inner_qpqpq( Real tau, int steps, Real lambda, int q_inner) {
+
     Real dtau = tau / steps;
-    /* do "steps" microcanonical steps (one "step" = one force evaluation)"  */
-    for(int step=1; step <= steps; step++){
-        /* update U's and H's - see header comment */
-        update_u      ( dtau *lambda );
-        update_h_gauge( dtau *0.5 );
-        update_u      ( dtau *(1-2.*lambda) );
-        update_h_gauge( dtau *0.5 );
-        update_u      ( dtau *lambda );
+
+    if(q_inner == 0){
+        /* regular Q update, no need for inner_steps or lambda */
+        update_u      ( tau );
+    } else if(q_inner == 1){
+        /* do a QPQ update in a loop of inner steps */
+        for(int step=1; step <= steps; step++){
+            update_u      ( dtau *0.5 );
+            update_h_gauge( dtau      );
+            update_u      ( dtau *0.5 );
+        }
+    } else if(q_inner == 2){
+        for(int step=1; step <= steps; step++){
+            /* update U's and H's - see header comment */
+            update_u      ( dtau *lambda );
+            update_h_gauge( dtau *0.5 );
+            update_u      ( dtau *(1-2.*lambda) );
+            update_h_gauge( dtau *0.5 );
+            update_u      ( dtau *lambda );
+        }
+    } else {
+        node0_printf("The q_inner must be 0 (Q), 1 (QPQ) or 2 (QPQPQ)\n");
+        terminate(1);
     }
 }
 
