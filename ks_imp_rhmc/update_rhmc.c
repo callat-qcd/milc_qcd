@@ -588,6 +588,8 @@ int update() {
 
     case INT_PQPQP:
         node0_printf("RUN PQPQP integrator\n");
+        Real lam          = outer_lambda;
+        Real one_mns_2lam = 1.0 -2.0*outer_lambda;
         for(step=1; step <= steps; step+=1){
             /*
             PQPQP = P Q_inner P Q_inner P
@@ -602,16 +604,30 @@ int update() {
             step, and update_h_ferm only updates the momentum, we can double the length 
             of the last step and skip the first, except the first and last step 
             */
-            if(step == 1){
-                iters += update_h_fermion(            outer_lambda * epsilon, multi_x);
-            }
-            update_inner_pqpqp           (                     0.5 * epsilon, inner_steps, inner_lambda, q_inner);
-            iters += update_h_fermion    ( (1.0 -2.0*outer_lambda) * epsilon, multi_x);
-            update_inner_pqpqp           (                     0.5 * epsilon, inner_steps, inner_lambda, q_inner);
-            if(step == steps){
-                iters += update_h_fermion(            outer_lambda * epsilon, multi_x);
+            if(q_inner == 0){
+                if(step == 1){
+                    iters += update_h_rhmc(         lam * epsilon, multi_x);
+                }
+                update_u                  (         0.5 * epsilon         );
+                iters += update_h_rhmc    (one_mns_2lam * epsilon, multi_x);
+                update_u                  (         0.5 * epsilon         );
+                if(step == steps){
+                    iters += update_h_rhmc(         lam * epsilon, multi_x);
+                } else {
+                    iters += update_h_rhmc(   2.0 * lam * epsilon, multi_x);
+                }
             } else {
-                iters += update_h_fermion(      2.0 * outer_lambda * epsilon, multi_x);
+                if(step == 1){
+                    iters += update_h_fermion(         lam * epsilon, multi_x);
+                }
+                update_inner_pqpqp           (         0.5 * epsilon, inner_steps, inner_lambda, q_inner);
+                iters += update_h_fermion    (one_mns_2lam * epsilon, multi_x);
+                update_inner_pqpqp           (         0.5 * epsilon, inner_steps, inner_lambda, q_inner);
+                if(step == steps){
+                    iters += update_h_fermion(         lam * epsilon, multi_x);
+                } else {
+                    iters += update_h_fermion(   2.0 * lam * epsilon, multi_x);
+                }
             }
             /* reunitarize the gauge field */
             reunitarize_ks();

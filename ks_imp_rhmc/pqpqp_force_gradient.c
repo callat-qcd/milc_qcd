@@ -45,7 +45,6 @@ void update_inner_pqpqp( Real tau, int steps, Real lambda, int q_inner) {
 
     if(q_inner == 0){
         /* regular P_Gauge then Q update, no need for inner_steps or lambda */
-        update_h_gauge(tau);
         update_u      (tau);
     } else if(q_inner == 1){
         /* do a PQP update in a loop of inner steps */
