@@ -151,7 +151,7 @@ void update_inner_pqpqp( Real tau, int steps, Real lambda, int q_inner) {
  */
 
 int force_gradient( Real eps_t, Real eps_ttt, su3_vector **multi_x ){
-    int iters;
+    int iters = 0;
 
 #ifdef FN
     invalidate_fermion_links(fn_links);
