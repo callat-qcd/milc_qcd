@@ -124,7 +124,7 @@ double hmom_action(void);
 /* pqpqp_force_gradient.c */
 void update_inner_qpqpq( Real tau, int steps, Real lambda, int q_inner);
 void update_inner_pqpqp( Real tau, int steps, Real lambda, int q_inner);
-void update_inner_fg(Real eps_t, int steps);
+void update_inner_fgi(Real eps_t, int steps);
 int  force_gradient( Real eps_t, Real eps_ttt, su3_vector **multi_x, int action);
 
 void copy_gauge_field(su3_matrix *linkcopyXUP,

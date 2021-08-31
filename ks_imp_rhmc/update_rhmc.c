@@ -640,38 +640,6 @@ int update() {
             step, and update_h_ferm only updates the momentum, we can double the length 
             of the last step and skip the first, except the first and last step 
             */
-
-	  /*
-	  // Check the momentum and gauge copy routines	  
-	  // allocate memory for gauge field copy
-	  su3_matrix *linkcopyXUP, *linkcopyYUP, *linkcopyZUP, *linkcopyTUP;
-	  linkcopyXUP = malloc(sizeof(su3_matrix)*sites_on_node);
-	  linkcopyYUP = malloc(sizeof(su3_matrix)*sites_on_node);
-	  linkcopyZUP = malloc(sizeof(su3_matrix)*sites_on_node);
-	  linkcopyTUP = malloc(sizeof(su3_matrix)*sites_on_node);
-	  // and momentum copy
-	  anti_hermitmat *momentumcopy;
-	  momentumcopy = malloc(sizeof(anti_hermitmat)*sites_on_node*4);
-	  
-	  // make a copy of the gauge field
-	  copy_gauge_field(linkcopyXUP, linkcopyYUP, linkcopyZUP, linkcopyTUP);
-	  
-	  //Make a copy of the momentum field 
-	  copy_momentum(momentumcopy);
-	  
-	  // restore the momentum 
-	  restore_momentum(momentumcopy);
-	  
-	  // restore the gauge field
-	  restore_gauge_field(linkcopyXUP, linkcopyYUP, linkcopyZUP, linkcopyTUP);
-	  
-	  // free the memory
-	  free(linkcopyXUP);
-	  free(linkcopyYUP);
-	  free(linkcopyZUP);
-	  free(linkcopyTUP);
-	  free(momentumcopy);
-	  */
 	  
 	  if(q_inner == 0){
                 if(step == 1){
@@ -685,8 +653,8 @@ int update() {
                 } else {
                     iters += update_h_rhmc(   2.0 * lam * epsilon, multi_x);
                 }
-            } else {
-                if(step == 1){
+	  } else if (q_inner == 1 || q_inner == 2) {
+	      if(step == 1){
                     iters += update_h_fermion(         lam * epsilon, multi_x);
                 }
                 update_inner_pqpqp           (         0.5 * epsilon, inner_steps, inner_lambda, q_inner);
@@ -697,9 +665,13 @@ int update() {
                 } else {
                     iters += update_h_fermion(   2.0 * lam * epsilon, multi_x);
                 }
-            }
-            /* reunitarize the gauge field */
-            reunitarize_ks();
+	  } else {
+	    node0_printf("The q_inner must be 0 (Q), 1 (PQP) or 2 (PQPQP)\n");
+	    terminate(1);
+	  }
+
+	  /* reunitarize the gauge field */
+	  reunitarize_ks();
         } /* end loop over microcanonical steps */        
     break;
 
@@ -717,20 +689,35 @@ int update() {
     Real xi_dtdt = 2*dtau*dtau*dtau*xi;
     
     for(step=1; step <= steps; step+=1){
+
+      // Initial step
+      if(step == 1) iters += update_h_fermion(lambda_dt, multi_x);
+
+      // Optional multiscale step
+      if(q_inner == 3) update_inner_fgi(dtauby2, inner_steps);
+      else if(q_inner == 2 || q_inner == 1 || q_inner == 0) update_inner_pqpqp(dtauby2, inner_steps, inner_lambda, q_inner);
+      else {
+	node0_printf("The q_inner must be 0 (Q), 1 (PQP) or 2 (PQPQP)\n");
+	terminate(1);
+      }
       
-	if(step == 1) iters += update_h_fermion(lambda_dt, multi_x);
-	
-	//update_inner_pqpqp(dtauby2, inner_steps, inner_lambda, q_inner);
-	update_inner_fg(dtauby2, inner_steps);
-	iters += force_gradient(one_minus_2lambda_dt, xi_dtdt, multi_x, 1);
-	update_inner_fg(dtauby2, inner_steps);
-	//update_inner_pqpqp(dtauby2, inner_steps, inner_lambda, q_inner);
-		
-	if(step == steps) iters += update_h_fermion(lambda_dt, multi_x);
-	else              iters += update_h_fermion(two_lambda_dt, multi_x);
-	        
-	/* reunitarize the gauge field */
-	reunitarize_ks();
+      // Apply Force Gradient
+      iters += force_gradient(one_minus_2lambda_dt, xi_dtdt, multi_x, 1);
+
+      // Optional multiscale step
+      if(q_inner == 3) update_inner_fgi(dtauby2, inner_steps);
+      else if(q_inner == 2 || q_inner == 1 || q_inner == 0) update_inner_pqpqp(dtauby2, inner_steps, inner_lambda, q_inner);
+      else {
+	node0_printf("The q_inner must be 0 (Q), 1 (PQP) or 2 (PQPQP)\n");
+	terminate(1);
+      }
+
+      // Final step
+      if(step == steps) iters += update_h_fermion(lambda_dt, multi_x);
+      else              iters += update_h_fermion(two_lambda_dt, multi_x);
+      
+      /* reunitarize the gauge field */
+      reunitarize_ks();
     } /* end loop over microcanonical steps */        
     break;
     

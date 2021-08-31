@@ -8,7 +8,7 @@
 #include "ks_imp_includes.h"    /* definitions files and prototypes */
 
 
-// These inner QPQPQ and PQPQP functions only update the gauge fields
+// These inner QPQPQ, PQPQP and FGI functions only update the gauge fields
 // They are for doing multi-steps for the gauge field per step for the fermions
 
 void update_inner_qpqpq( Real tau, int steps, Real lambda, int q_inner) {
@@ -77,12 +77,12 @@ void update_inner_pqpqp( Real tau, int steps, Real lambda, int q_inner) {
             }
         }
     } else {
-        node0_printf("The q_inner must be 0 (Q), 1 (QPQ) or 2 (QPQPQ)\n");
+        node0_printf("The q_inner must be 0 (Q), 1 (PQP) or 2 (PQPQP)\n");
         terminate(1);
     }
 }
 
-void update_inner_fg(Real tau, int steps){
+void update_inner_fgi(Real tau, int steps){
   
 #ifdef FN
   invalidate_fermion_links(fn_links);
