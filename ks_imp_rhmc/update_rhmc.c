@@ -167,7 +167,7 @@ int update() {
 #endif
   int i,j;
   su3_vector **multi_x;
-  int n_multi_x;	// number of vectors in multi_x
+  int n_multi_x = 0;	// number of vectors in multi_x
   su3_vector *sumvec;
   int iphi, int_alg, inaik, jphi, n;
   Real lambda, alpha, beta; // parameters in integration algorithms
@@ -666,7 +666,7 @@ int update() {
                     iters += update_h_fermion(   2.0 * lam * epsilon, multi_x);
                 }
 	  } else {
-	    node0_printf("The q_inner must be 0 (Q), 1 (PQP) or 2 (PQPQP)\n");
+	    node0_printf("The q_inner must be 0 (Q), 1 (PQP) or 2 (PQPQP), q = %d\n", q_inner);
 	    terminate(1);
 	  }
 
@@ -691,30 +691,45 @@ int update() {
     for(step=1; step <= steps; step+=1){
 
       // Initial step
-      if(step == 1) iters += update_h_fermion(lambda_dt, multi_x);
-
+      if(step == 1) {
+	if (q_inner != 0) iters += update_h_fermion(lambda_dt, multi_x);
+	else              iters += update_h_rhmc(lambda_dt, multi_x);
+      }
+      
       // Optional multiscale step
       if(q_inner == 3) update_inner_fgi(dtauby2, inner_steps);
-      else if(q_inner == 2 || q_inner == 1 || q_inner == 0) update_inner_pqpqp(dtauby2, inner_steps, inner_lambda, q_inner);
-      else {
-	node0_printf("The q_inner must be 0 (Q), 1 (PQP) or 2 (PQPQP)\n");
+      else if(q_inner == 2 ||
+	      q_inner == 1 ||
+	      q_inner == 0) {
+	update_inner_pqpqp(dtauby2, inner_steps, inner_lambda, q_inner);
+      } else {
+	node0_printf("The q_inner must be 0 (Q), 1 (PQP) or 2 (PQPQP), q = %d\n", q_inner);
 	terminate(1);
       }
       
       // Apply Force Gradient
-      iters += force_gradient(one_minus_2lambda_dt, xi_dtdt, multi_x, 1);
-
+      iters += force_gradient(one_minus_2lambda_dt, xi_dtdt, multi_x, q_inner == 0 ? 2 : 1);
+      
       // Optional multiscale step
       if(q_inner == 3) update_inner_fgi(dtauby2, inner_steps);
-      else if(q_inner == 2 || q_inner == 1 || q_inner == 0) update_inner_pqpqp(dtauby2, inner_steps, inner_lambda, q_inner);
-      else {
-	node0_printf("The q_inner must be 0 (Q), 1 (PQP) or 2 (PQPQP)\n");
+      else if(q_inner == 2 ||
+	      q_inner == 1 ||
+	      q_inner == 0) {
+	update_inner_pqpqp(dtauby2, inner_steps, inner_lambda, q_inner);
+      } else {
+	node0_printf("The q_inner must be 0 (Q), 1 (PQP) or 2 (PQPQP), q = %d\n", q_inner);
 	terminate(1);
       }
 
       // Final step
-      if(step == steps) iters += update_h_fermion(lambda_dt, multi_x);
-      else              iters += update_h_fermion(two_lambda_dt, multi_x);
+      if(step == steps) {
+	if (q_inner != 0) iters += update_h_fermion(lambda_dt, multi_x);
+	else              iters += update_h_rhmc(lambda_dt, multi_x);
+      }
+      else {
+	if (q_inner != 0) iters += update_h_fermion(two_lambda_dt, multi_x);
+	else              iters += update_h_rhmc(two_lambda_dt, multi_x);
+      }
       
       /* reunitarize the gauge field */
       reunitarize_ks();
