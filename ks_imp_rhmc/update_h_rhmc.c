@@ -17,12 +17,16 @@ int update_h_rhmc( Real eps, su3_vector **multi_x ){
 #ifdef FN
   invalidate_fermion_links(fn_links);
 #endif
-  /*  node0_printf("update_h_rhmc:\n"); */
+#ifdef MILC_GLOBAL_DEBUG
+  node0_printf("update_h_rhmc:\n"); 
+#endif
+  
   /* gauge field force */
   imp_gauge_force_ks(eps,F_OFFSET(mom));
-  /* fermionic force */
   
+  /* fermionic force */  
   iters = update_h_fermion( eps,  multi_x );
+  
   return iters;
 } /* update_h_rhmc */
 
@@ -46,7 +50,7 @@ int update_h_fermion( Real eps, su3_vector **multi_x ){
   imp_ferm_links_t **fn;
 
   /* Algorithm sketch: assemble multi_x with all |X> fields,
-     then call force routine for each part (so far we have to parts:
+     then call force routine for each part (so far we have two parts:
      zero correction to Naik and non-zero correction to Naik */
 
   allresidues = (Real *)malloc(n_order_naik_total*sizeof(Real));

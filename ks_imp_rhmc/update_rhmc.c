@@ -256,6 +256,42 @@ int update() {
         if(j>n_multi_x)n_multi_x=j; // Fermion force needs all multi_x at once in this algorithm
     break;
 
+    case INT_FGI_PQPQP:
+        node0_printf("FGI PQPQP Integrator: steps= %d eps= %e\n", steps, epsilon);
+        if(getenv("OUTER_LAMBDA")) {
+            outer_lambda = atof(strdup(getenv("OUTER_LAMBDA")));
+            node0_printf("             ENV declared OUTER_LAMBDA = %e\n", outer_lambda);
+        } else {
+            outer_lambda = 1./6; // this eliminates the (1 - 6 lam) {T,{S,{T}} dt**2 term
+            node0_printf("             default OUTER_LAMBDA = %e\n", outer_lambda);
+        }
+        if(getenv("INNER_LAMBDA")){
+            inner_lambda = atof(strdup(getenv("INNER_LAMBDA")));
+            node0_printf("             ENV declared INNER_LAMBDA = %e\n", inner_lambda);
+        } else {
+            inner_lambda = 1./6;
+            node0_printf("             default INNER_LAMBDA = %e\n", inner_lambda);            
+        }
+        if(getenv("INNER_STEPS")){
+            inner_steps = atof(strdup(getenv("INNER_STEPS")));
+            node0_printf("             ENV declared INNER_STEPS = %d\n", inner_steps);
+        } else {
+            inner_steps = 1;
+            node0_printf("             default INNER_STEPS = %d\n", inner_steps);
+        }
+        if(getenv("Q_INNER")){
+            q_inner = atof(strdup(getenv("Q_INNER")));
+            node0_printf("             ENV declared Q_INNER type = %d\n", q_inner);
+        } else {
+            q_inner = 0;
+            node0_printf("             default Q_INNER type = %d\n", q_inner);
+        }
+        n_multi_x = max_rat_order;
+        for(j=0,i=0; i<n_pseudo; i++){j+=rparam[i].MD.order;}
+        if(j>n_multi_x)n_multi_x=j; // Fermion force needs all multi_x at once in this algorithm
+    break;
+
+    
     case INT_5G1F:
       alpha = 0.1; beta = 0.1;
       node0_printf("Omelyan integration, 5 gauge for one 1 fermion step, steps= %d eps= %e alpha= %e beta= %e\n",
@@ -604,7 +640,40 @@ int update() {
             step, and update_h_ferm only updates the momentum, we can double the length 
             of the last step and skip the first, except the first and last step 
             */
-            if(q_inner == 0){
+
+	  /*
+	  // Check the momentum and gauge copy routines	  
+	  // allocate memory for gauge field copy
+	  su3_matrix *linkcopyXUP, *linkcopyYUP, *linkcopyZUP, *linkcopyTUP;
+	  linkcopyXUP = malloc(sizeof(su3_matrix)*sites_on_node);
+	  linkcopyYUP = malloc(sizeof(su3_matrix)*sites_on_node);
+	  linkcopyZUP = malloc(sizeof(su3_matrix)*sites_on_node);
+	  linkcopyTUP = malloc(sizeof(su3_matrix)*sites_on_node);
+	  // and momentum copy
+	  anti_hermitmat *momentumcopy;
+	  momentumcopy = malloc(sizeof(anti_hermitmat)*sites_on_node*4);
+	  
+	  // make a copy of the gauge field
+	  copy_gauge_field(linkcopyXUP, linkcopyYUP, linkcopyZUP, linkcopyTUP);
+	  
+	  //Make a copy of the momentum field 
+	  copy_momentum(momentumcopy);
+	  
+	  // restore the momentum 
+	  restore_momentum(momentumcopy);
+	  
+	  // restore the gauge field
+	  restore_gauge_field(linkcopyXUP, linkcopyYUP, linkcopyZUP, linkcopyTUP);
+	  
+	  // free the memory
+	  free(linkcopyXUP);
+	  free(linkcopyYUP);
+	  free(linkcopyZUP);
+	  free(linkcopyTUP);
+	  free(momentumcopy);
+	  */
+	  
+	  if(q_inner == 0){
                 if(step == 1){
                     iters += update_h_rhmc(         lam * epsilon, multi_x);
                 }
@@ -634,6 +703,38 @@ int update() {
         } /* end loop over microcanonical steps */        
     break;
 
+  case INT_FGI_PQPQP:
+    node0_printf("RUN FGI_PQPQP integrator\n");
+
+    Real lambda = 1.0/6.0;
+    Real xi = 1.0/72.0;
+    
+    Real dtau = epsilon;
+    Real lambda_dt = dtau*lambda;
+    Real dtauby2 = dtau / 2.0;
+    Real one_minus_2lambda_dt = (1-2*lambda)*dtau;
+    Real two_lambda_dt = lambda_dt*2;
+    Real xi_dtdt = 2*dtau*dtau*dtau*xi;
+    
+    for(step=1; step <= steps; step+=1){
+      
+	if(step == 1) iters += update_h_fermion(lambda_dt, multi_x);
+	
+	//update_inner_pqpqp(dtauby2, inner_steps, inner_lambda, q_inner);
+	update_inner_fg(dtauby2, inner_steps);
+	iters += force_gradient(one_minus_2lambda_dt, xi_dtdt, multi_x, 1);
+	update_inner_fg(dtauby2, inner_steps);
+	//update_inner_pqpqp(dtauby2, inner_steps, inner_lambda, q_inner);
+		
+	if(step == steps) iters += update_h_fermion(lambda_dt, multi_x);
+	else              iters += update_h_fermion(two_lambda_dt, multi_x);
+	        
+	/* reunitarize the gauge field */
+	reunitarize_ks();
+    } /* end loop over microcanonical steps */        
+    break;
+    
+    
     case INT_5G1F:
         /* do "steps" microcanonical steps (one "step" = one force evaluation)"  */
         for(step=2; step <= steps; step+=2){
@@ -729,7 +830,7 @@ int update() {
         /* do "steps" microcanonical steps (one "step" = one force evaluation)"  */
         for(step=6; step <= steps; step+=6){
 	    /* update U's and H's - first Omelyan step */
-     	    update_u(0.5*epsilon*lambda);
+	    update_u(0.5*epsilon*lambda);
 	    imp_gauge_force_ks(epsilon,F_OFFSET(mom));
             eo_fermion_force_rhmc( epsilon,  &rparam[1].MD,
 				   multi_x, F_OFFSET(phi[1]), rsqmin_md[1], 
@@ -877,6 +978,12 @@ const char *ks_int_alg_opt_chr( void )
     break;
   case INT_PLAY:
     return "INT_PLAY";
+    break;
+  case INT_PQPQP:
+    return "INT_PQPQP";
+    break;
+  case INT_FGI_PQPQP:
+    return "INT_FGI_PQPQP";
     break;
   default:
     return "UNKNOWN";

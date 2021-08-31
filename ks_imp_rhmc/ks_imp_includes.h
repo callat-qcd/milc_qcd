@@ -57,7 +57,7 @@ int readin(int prompt);
 
 enum int_alg_t { INT_LEAPFROG, INT_OMELYAN, INT_2EPS_3TO1, INT_2EPS_2TO1, 
                  INT_2G1F, INT_3G1F, INT_5G1F, INT_6G1F, INT_4MN4FP, INT_4MN5FV, INT_FOURSTEP, 
-                 INT_PQPQP,
+                 INT_PQPQP, INT_FGI_PQPQP,
                  INT_PLAY };
 
 /* Set default integration algorithm */
@@ -124,7 +124,9 @@ double hmom_action(void);
 /* pqpqp_force_gradient.c */
 void update_inner_qpqpq( Real tau, int steps, Real lambda, int q_inner);
 void update_inner_pqpqp( Real tau, int steps, Real lambda, int q_inner);
-int  force_gradient( Real eps_t, Real eps_ttt, su3_vector **multi_x );
+void update_inner_fg(Real eps_t, int steps);
+int  force_gradient( Real eps_t, Real eps_ttt, su3_vector **multi_x, int action);
+
 void copy_gauge_field(su3_matrix *linkcopyXUP,
                       su3_matrix *linkcopyYUP,
                       su3_matrix *linkcopyZUP,

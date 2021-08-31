@@ -49,7 +49,7 @@ void update_inner_pqpqp( Real tau, int steps, Real lambda, int q_inner) {
     } else if(q_inner == 1){
         /* do a PQP update in a loop of inner steps */
         for(int step=1; step <= steps; step++){
-            if(step == 1){//only do first step the first itteration through loop
+            if(step == 1){//only do first step the first iteration through loop
                 update_h_gauge( 0.5 * dtau );
             }
             update_u          (       dtau );
@@ -62,7 +62,7 @@ void update_inner_pqpqp( Real tau, int steps, Real lambda, int q_inner) {
         }
     } else if(q_inner == 2){
         for(int step=1; step <= steps; step++){
-            //only do first step the first itteration through loop
+            //only do first step the first iteration through loop
             if(step == 1){
                 update_h_gauge( dtau *lambda );
             }
@@ -82,6 +82,36 @@ void update_inner_pqpqp( Real tau, int steps, Real lambda, int q_inner) {
     }
 }
 
+void update_inner_fg(Real tau, int steps){
+  
+#ifdef FN
+  invalidate_fermion_links(fn_links);
+#endif
+  
+  Real lambda = 1.0/6.0;
+  Real xi = 1.0/72.0;
+  
+  Real dtau = tau / steps;
+  Real lambda_dt = dtau*lambda;
+  Real dtauby2 = dtau / 2.0;
+  Real one_minus_2lambda_dt = (1-2*lambda)*dtau;
+  Real two_lambda_dt = lambda_dt*2;
+  Real xi_dtdt = 2*dtau*dtau*dtau*xi;
+  
+  for(int step=1; step <= steps; step+=1){
+    
+    if(step == 1) update_h_gauge(lambda_dt);
+    
+    update_u(dtauby2);
+    force_gradient(one_minus_2lambda_dt, xi_dtdt, NULL, 0);
+    update_u(dtauby2);
+    
+    if(step == steps) update_h_gauge(lambda_dt);
+    else              update_h_gauge(two_lambda_dt);      
+    
+  }
+}
+
 // Force Gradient Integrator steps
 /* see Yin and Mawhinney, arXiv:1111.5059
        Kennedy, Clark, Silva, arXiv:0910.2950
@@ -95,14 +125,14 @@ void update_inner_pqpqp( Real tau, int steps, Real lambda, int q_inner) {
    which has a Shadow Hamiltonian
    
    H = T+S
-   H_shaddow = H + dt**2 ( (6 lam**2 -6 lam +1)/12 {S, {S, T}}
-                           +(1-6 lam)/24 {T, {S, T}})
+   H_shadow = H + dt**2 ( (6 lam**2 -6 lam +1)/12 {S, {S, T}}
+                          +(1-6 lam)/24 {T, {S, T}})
                  + dt**4
 
-   If we chose lam = 1/6, the coefficient of the {T, {S, T}} term becomes zero
+   If we choose lam = 1/6, the coefficient of the {T, {S, T}} term becomes zero
 
-   H_shaddow = H + dt**2 ( 1/72 {S, {S, T}} )
-                 + dt**4
+   H_shadow = H + dt**2 ( 1/72 {S, {S, T}} )
+                + dt**4
 
    Kate et al noticed {S, {S,T}} is independent of momentum, and depends on the 2nd
    derivative of the "potential", S
@@ -150,7 +180,11 @@ void update_inner_pqpqp( Real tau, int steps, Real lambda, int q_inner) {
    and the P_FG the force_gradient step
  */
 
-int force_gradient( Real eps_t, Real eps_ttt, su3_vector **multi_x ){
+// DMH Add an arg to specify gauge action, fermion action, or rhmc action.
+// action = 0 -> gauge action
+// action = 1 -> ferm action
+// action = 2 -> rhmc action
+int force_gradient(Real eps_t, Real eps_ttt, su3_vector **multi_x, int action){
     int iters = 0;
 
 #ifdef FN
@@ -179,8 +213,14 @@ int force_gradient( Real eps_t, Real eps_ttt, su3_vector **multi_x ){
     // 1 / (dt (1-2lam))
     // eps_t = dt * (1-2lam)
     // eps_ttt = dt**3 /72 * 2
-    // we need to compute the gauge and ferm contributions to the momentum
-    iters += update_h_rhmc( eps_ttt / eps_t, multi_x);
+    // we need to compute the gauge / ferm contributions to the momentum
+    if(action == 0) update_h_gauge( eps_ttt / eps_t);
+    else if(action == 1) iters += update_h_fermion( eps_ttt / eps_t, multi_x);
+    else if(action == 2) iters += update_h_rhmc( eps_ttt / eps_t, multi_x);
+    else {
+      node0_printf("The action must be 0 (gauge), 1 (ferm) or 2 (rhmc)\n");
+      terminate(1);
+    }
 
     // given the momentum kick (force), update the links to U'
     update_u( 1.0 );
@@ -190,7 +230,18 @@ int force_gradient( Real eps_t, Real eps_ttt, su3_vector **multi_x ){
 
     // add our kick to the momentum
     // eps_t = dt * (1-2lam)
-    iters += update_h_rhmc( eps_t, multi_x );
+    // DMH because we restore the gauge field, we can write a thinner
+    // version of this step that does not update the gauge field, rather
+    // just the momenta and fermions. However, given the speed with which
+    // gauge updates are performed, it's likely to not give any significant
+    // speed-up.
+    if(action == 0) update_h_gauge( eps_t);
+    else if(action == 1) iters += update_h_fermion( eps_t, multi_x);
+    else if(action == 2) iters += update_h_rhmc( eps_t, multi_x);
+    else {
+      node0_printf("The action must be 0 (gauge), 1 (ferm) or 2 (rhmc)\n");
+      terminate(1);
+    }
 
     // restore the gauge field
     restore_gauge_field(linkcopyXUP, linkcopyYUP, linkcopyZUP, linkcopyTUP);
@@ -204,6 +255,8 @@ int force_gradient( Real eps_t, Real eps_ttt, su3_vector **multi_x ){
     
     return iters;
 }
+
+
 
 // FGI helper functions
 
