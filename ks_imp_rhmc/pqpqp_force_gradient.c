@@ -190,6 +190,12 @@ int force_gradient(Real eps_t, Real eps_ttt, su3_vector **multi_x, int action){
 #ifdef FN
     invalidate_fermion_links(fn_links);
 #endif
+
+    // Sanity check
+    if((action == 1 || action == 2) && !multi_x) {
+      node0_printf("For action 1 (ferm) or 2 (rhmc) you must pass a valid `su3_vector **multi_x` array\n");
+      terminate(1);
+    }
     
     // allocate memory for gauge field copy
     su3_matrix *linkcopyXUP, *linkcopyYUP, *linkcopyZUP, *linkcopyTUP;
