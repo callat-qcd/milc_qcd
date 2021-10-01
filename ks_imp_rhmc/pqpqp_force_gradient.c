@@ -220,9 +220,9 @@ int force_gradient(Real eps_t, Real eps_ttt, su3_vector **multi_x, int action){
     // eps_t = dt * (1-2lam)
     // eps_ttt = dt**3 /72 * 2
     // we need to compute the gauge / ferm contributions to the momentum
-    if(action == 0) update_h_gauge( eps_ttt / eps_t);
+    if(action == 0)               update_h_gauge(   eps_ttt / eps_t);
     else if(action == 1) iters += update_h_fermion( eps_ttt / eps_t, multi_x);
-    else if(action == 2) iters += update_h_rhmc( eps_ttt / eps_t, multi_x);
+    else if(action == 2) iters += update_h_rhmc(    eps_ttt / eps_t, multi_x);
     else {
       node0_printf("The action must be 0 (gauge), 1 (ferm) or 2 (rhmc)\n");
       terminate(1);
@@ -241,9 +241,9 @@ int force_gradient(Real eps_t, Real eps_ttt, su3_vector **multi_x, int action){
     // just the momenta and fermions. However, given the speed with which
     // gauge updates are performed, it's likely to not give any significant
     // speed-up.
-    if(action == 0) update_h_gauge( eps_t);
+    if(action == 0)               update_h_gauge(   eps_t);
     else if(action == 1) iters += update_h_fermion( eps_t, multi_x);
-    else if(action == 2) iters += update_h_rhmc( eps_t, multi_x);
+    else if(action == 2) iters += update_h_rhmc(    eps_t, multi_x);
     else {
       node0_printf("The action must be 0 (gauge), 1 (ferm) or 2 (rhmc)\n");
       terminate(1);

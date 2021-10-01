@@ -68,21 +68,21 @@ int update_h_fermion( Real eps, su3_vector **multi_x ){
     for( jphi=0; jphi<n_pseudo_naik[i]; jphi++ ) {
       restore_fermion_links_from_site(fn_links, prec_md[iphi]);
       fn = get_fm_links(fn_links);
-
+      
       // Add the current pseudofermion to the current set
       order = rparam[iphi].MD.order;
       residues = rparam[iphi].MD.res;
       roots = rparam[iphi].MD.pole;
-
+      
       // Compute ( M^\dagger M)^{-1} in xxx_even
       // Then compute M*xxx in temporary vector xxx_odd 
       /* See long comment at end of file */
-	/* The diagonal term in M doesn't matter */
+      /* The diagonal term in M doesn't matter */
       iters += ks_ratinv( F_OFFSET(phi[iphi]), multi_x+tmporder, roots, residues,
                           order, niter_md[iphi], rsqmin_md[iphi], prec_md[iphi], EVEN,
 			  &final_rsq, fn[i], 
 			  i, rparam[iphi].naik_term_epsilon );
-
+      
       for(j=0;j<order;j++){
 	dslash_field( multi_x[tmporder+j], multi_x[tmporder+j],  ODD,
 		      fn[i]);
