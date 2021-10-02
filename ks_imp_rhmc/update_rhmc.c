@@ -272,6 +272,8 @@ int update() {
             inner_lambda = 1./6;
             node0_printf("             default INNER_LAMBDA = %e\n", inner_lambda);            
         }
+	// This ENVAR governs the number of inner steps taken by a multi
+	// time scale integrator.
         if(getenv("INNER_STEPS")){
             inner_steps = atof(strdup(getenv("INNER_STEPS")));
             node0_printf("             ENV declared INNER_STEPS = %d\n", inner_steps);
@@ -279,6 +281,11 @@ int update() {
             inner_steps = 1;
             node0_printf("             default INNER_STEPS = %d\n", inner_steps);
         }
+	// This ENVAR governs which gauge integrator to use:
+	// Q_INNER = 0 : use the simple single time step Q integrator.
+	// Q_INNER = 1 : use the PQP integrator.
+	// Q_INNER = 2 : use the PQPQP integrator with INNER_STEPS inner steps.
+	// Q_INNER = 3 : use the FGI integrator with INNER_STEPS inner steps.
         if(getenv("Q_INNER")){
             q_inner = atof(strdup(getenv("Q_INNER")));
             node0_printf("             ENV declared Q_INNER type = %d\n", q_inner);
@@ -687,7 +694,22 @@ int update() {
     Real one_minus_2lambda_dt = (1-2*lambda)*dtau;
     Real two_lambda_dt = lambda_dt*2;
     Real xi_dtdt = 2*dtau*dtau*dtau*xi;
-    
+
+    /*
+      This Force Gradient Integrator can be used with 4 differnt types of 
+      gauge integtegrator:
+      The INNER_STEPS envar governs the number of inner steps taken by a multi
+      time scale integrator.
+
+      The Q_INNER envar governs which gauge integrator to use:
+      Q_INNER = 0 : use the simple single time step Q integrator.
+      Q_INNER = 1 : use the PQP integrator.
+      Q_INNER = 2 : use the PQPQP integrator with INNER_STEPS inner steps.
+      Q_INNER = 3 : use the FGI integrator with INNER_STEPS inner steps.
+      
+      For a GPU implementation, one must consider gauge field copying
+      from device to host.      
+    */
     for(step=1; step <= steps; step+=1){
 
       // Initial step
