@@ -697,7 +697,7 @@ int update() {
 
     /*
       This Force Gradient Integrator can be used with 4 differnt types of 
-      gauge integtegrator:
+      gauge integrator:
       The INNER_STEPS envar governs the number of inner steps taken by a multi
       time scale integrator.
 
