@@ -44,12 +44,24 @@ void update_inner_pqpqp( Real tau, int steps, Real lambda, int q_inner) {
     Real dtau = tau / steps;
 
     if(q_inner == 0){
-        /* regular P_Gauge then Q update, no need for inner_steps or lambda */
-        update_u      (tau);
+        /* regular P_Gauge */
+        update_h_gauge(tau);
     } else if(q_inner == 1){
         /* do a PQP update in a loop of inner steps */
         for(int step=1; step <= steps; step++){
-            if(step == 1){//only do first step the first itteration through loop
+            /*
+            if(step == 1){
+                update_u( 0.5 * dtau);
+            }
+            update_h_gauge( dtau);
+            if(step == steps){
+                update_u( 0.5 * dtau);
+            } else {
+                update_u( dtau);
+            }
+            */
+            ///*
+            if(step == 1){//only do first step the first iteration through loop
                 update_h_gauge( 0.5 * dtau );
             }
             update_u          (       dtau );
@@ -59,10 +71,11 @@ void update_inner_pqpqp( Real tau, int steps, Real lambda, int q_inner) {
             } else{
                 update_h_gauge(       dtau );
             }
+            //*/
         }
     } else if(q_inner == 2){
         for(int step=1; step <= steps; step++){
-            //only do first step the first itteration through loop
+            //only do first step the first iteration through loop
             if(step == 1){
                 update_h_gauge( dtau *lambda );
             }
@@ -77,7 +90,7 @@ void update_inner_pqpqp( Real tau, int steps, Real lambda, int q_inner) {
             }
         }
     } else {
-        node0_printf("The q_inner must be 0 (Q), 1 (QPQ) or 2 (QPQPQ)\n");
+        node0_printf("The q_inner must be 0 (P), 1 (PQP) or 2 (PQPQP)\n");
         terminate(1);
     }
 }
@@ -151,7 +164,7 @@ void update_inner_pqpqp( Real tau, int steps, Real lambda, int q_inner) {
  */
 
 int force_gradient( Real eps_t, Real eps_ttt, su3_vector **multi_x ){
-    int iters;
+    int iters=0;
 
 #ifdef FN
     invalidate_fermion_links(fn_links);
@@ -171,6 +184,10 @@ int force_gradient( Real eps_t, Real eps_ttt, su3_vector **multi_x ){
     copy_gauge_field(linkcopyXUP, linkcopyYUP, linkcopyZUP, linkcopyTUP);
 
     //Make a copy of the momentum field and then zero it out
+#if defined(HAVE_QUDA) && defined(USE_GF_GPU) && defined(USE_FF_GPU)
+    QudaMILCSiteArg_t arg = newQudaMILCSiteArg();
+    qudaMomSave(MILC_PRECISION, &arg)
+#endif
     copy_momentum(momentumcopy);
     zero_momentum();
 
