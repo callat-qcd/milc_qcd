@@ -173,7 +173,7 @@ int update() {
   Real lambda, alpha, beta; // parameters in integration algorithms
   imp_ferm_links_t** fn;
   // params for PQPQP
-  Real inner_lambda, outer_lambda;
+  Real inner_lambda, outer_lambda, one_mns_2lam;
   int  inner_steps, q_inner;
 
 
@@ -255,7 +255,13 @@ int update() {
         for(j=0,i=0; i<n_pseudo; i++){j+=rparam[i].MD.order;}
         if(j>n_multi_x)n_multi_x=j; // Fermion force needs all multi_x at once in this algorithm
     break;
-
+    case INT_PQPQP_FGI:
+        node0_printf("PQPQP_FGI Integrator: steps= %d eps= %e\n", steps, epsilon);
+        outer_lambda = 1./6;
+        n_multi_x = max_rat_order;
+        for(j=0,i=0; i<n_pseudo; i++){j+=rparam[i].MD.order;}
+        if(j>n_multi_x)n_multi_x=j; // Fermion force needs all multi_x at once in this algorithm
+    break;
     case INT_5G1F:
       alpha = 0.1; beta = 0.1;
       node0_printf("Omelyan integration, 5 gauge for one 1 fermion step, steps= %d eps= %e alpha= %e beta= %e\n",
@@ -588,15 +594,13 @@ int update() {
 
     case INT_PQPQP:
         node0_printf("RUN PQPQP integrator\n");
-        Real lam          = outer_lambda;
-        Real one_mns_2lam = 1.0 -2.0*outer_lambda;
+        lambda          = outer_lambda;
+        one_mns_2lam = 1.0 -2.0*outer_lambda;
         for(step=1; step <= steps; step+=1){
             /*
-            PQPQP = P Q_inner P Q_inner P
-            P does both the Fermion and Gauge force
-            Q_inner will do one of 
-              Q, QPQ, QPQPQ
-            where these P only update the gauge force
+            PQPQP = P_G P_F(lam dt) Q(dt/2) P_GF((1-2lam)dt) Q(dt/2) P_F P_G (lam dt)
+
+            P_G will do one of, P_G, PQP_G, PQPQP_G
 
             One "step" brings the MD forward by epsilon
 
@@ -604,34 +608,169 @@ int update() {
             step, and update_h_ferm only updates the momentum, we can double the length 
             of the last step and skip the first, except the first and last step 
             */
+            // P
+            if(step == 1){// first step - regular update
+                update_inner_pqpqp       ( lambda * epsilon, inner_steps, inner_lambda, q_inner);
+                iters += update_h_fermion( lambda * epsilon, multi_x);
+            }
+            // Q
+            if(q_inner == 0){
+                update_u                 ( 0.5 * epsilon);
+            } else {// for PQP and PQPQP, we are updating Q in the inner_pqpqp so need to subtract this
+                update_u                 ( epsilon*(0.5 - lambda));
+            }
+            // P
+            iters += update_h_rhmc       (one_mns_2lam * epsilon, multi_x);
+            // Q
+            if(q_inner == 0){
+                update_u                 ( 0.5 * epsilon);
+            } else {
+                update_u                 ( epsilon*(0.5 - lambda));
+            }
+            // P
+            if(step == steps){// last step - do regular update
+                iters += update_h_fermion( lambda * epsilon, multi_x);
+                update_inner_pqpqp       ( lambda * epsilon, inner_steps, inner_lambda, q_inner);
+            } else {// do 2x the update as first step is skipped
+                iters += update_h_fermion( 2.0 * lambda * epsilon, multi_x);
+                update_inner_pqpqp       ( 2.0 * lambda * epsilon, inner_steps, inner_lambda, q_inner);
+            }
+
+            /*
             if(q_inner == 0){
                 if(step == 1){
-                    iters += update_h_rhmc(         lam * epsilon, multi_x);
+                    iters += update_h_rhmc(         lambda * epsilon, multi_x);
                 }
                 update_u                  (         0.5 * epsilon         );
                 iters += update_h_rhmc    (one_mns_2lam * epsilon, multi_x);
                 update_u                  (         0.5 * epsilon         );
                 if(step == steps){
-                    iters += update_h_rhmc(         lam * epsilon, multi_x);
+                    iters += update_h_rhmc(         lambda * epsilon, multi_x);
                 } else {
-                    iters += update_h_rhmc(   2.0 * lam * epsilon, multi_x);
+                    iters += update_h_rhmc(   2.0 * lambda * epsilon, multi_x);
                 }
             } else {
                 if(step == 1){
-                    iters += update_h_fermion(         lam * epsilon, multi_x);
+                    iters += update_h_fermion(         lambda * epsilon, multi_x);
                 }
                 update_inner_pqpqp           (         0.5 * epsilon, inner_steps, inner_lambda, q_inner);
                 iters += update_h_fermion    (one_mns_2lam * epsilon, multi_x);
                 update_inner_pqpqp           (         0.5 * epsilon, inner_steps, inner_lambda, q_inner);
                 if(step == steps){
-                    iters += update_h_fermion(         lam * epsilon, multi_x);
+                    iters += update_h_fermion(         lambda * epsilon, multi_x);
                 } else {
-                    iters += update_h_fermion(   2.0 * lam * epsilon, multi_x);
+                    iters += update_h_fermion(   2.0 * lambda * epsilon, multi_x);
                 }
             }
+            */
             /* reunitarize the gauge field */
             reunitarize_ks();
         } /* end loop over microcanonical steps */        
+    break;
+
+    case INT_PQPQP_FGI:
+        node0_printf("RUN PQPQP_FGI integrator\n");
+        lambda          = outer_lambda;
+        one_mns_2lam = 1.0 -2.0*outer_lambda;
+        for(step=1; step <= steps; step+=1){
+            // P
+            if(step == 1){// first step - regular update
+                node0_printf("PQPQP_FGI:  P[lam dt] step %d\n",step);
+                iters += update_h_rhmc( lambda * epsilon, multi_x);
+            }
+            // Q
+            node0_printf("PQPQP_FGI:  Q[ dt / 2] step %d\n",step);
+            update_u                  ( 0.5 * epsilon);
+            // P_FGI
+            node0_printf("PQPQP_FGI:  P_FGI[(1-2lam) dt] step %d\n",step);
+            iters += force_gradient   ( one_mns_2lam * epsilon, 2. * epsilon*epsilon*epsilon / 72, multi_x);
+
+#ifdef HISQ_REUNITARIZATION_DEBUG
+            {
+            double max_delta_phase = 0.0;
+            double max_delta_norm = 0.0;
+            site *s;
+            int idir;
+            double delta_phase,delta_norm;
+            su3_matrix Wdiff;
+            double min_det_V, max_det_V;
+            double min_eigen,max_eigen,min_denom;
+            double Wm1unit; /* norm of (W^+W - I) */
+            double flag_detV=1;
+            FORALLSITES(i,s) {
+              for( idir=XUP;idir<=TUP;idir++ ) {
+                /* phase deviation */
+                delta_phase = fabs( lattice[i].phase_Y[idir] -
+                                    lattice[i].phase_Y_previous[idir] );
+                if( delta_phase > max_delta_phase ) max_delta_phase = delta_phase;
+                /* Wlink norm deviation */
+                sub_su3_matrix( &(lattice[i].Wlink[idir]),
+                                &(lattice[i].Wlink_previous[idir]), &Wdiff );
+                delta_norm = su3_norm_frob( &Wdiff );
+                if( delta_norm > max_delta_norm ) max_delta_norm = delta_norm;
+
+                if( 1==flag_detV ) {
+                  min_det_V = lattice[i].Vdet[idir];
+                  max_det_V = min_det_V;
+                  min_eigen = lattice[i].gmin[idir];
+                  max_eigen = lattice[i].gmax[idir];
+                  min_denom = lattice[i].denom[idir];
+                  Wm1unit = lattice[i].unitW1[idir];
+                  flag_detV = 0;
+                }
+                else {
+                  if( min_det_V > lattice[i].Vdet[idir] )
+                    min_det_V = lattice[i].Vdet[idir];
+                  if( max_det_V < lattice[i].Vdet[idir] )
+                    max_det_V = lattice[i].Vdet[idir];
+                  if( min_eigen > lattice[i].gmin[idir] )
+                    min_eigen = lattice[i].gmin[idir];
+                  if( max_eigen < lattice[i].gmax[idir] )
+                    max_eigen = lattice[i].gmax[idir];
+                  if( min_denom > lattice[i].denom[idir] )
+                    min_denom = lattice[i].denom[idir];
+                  if( Wm1unit < lattice[i].unitW1[idir] )
+                    Wm1unit = lattice[i].unitW1[idir];
+                }
+              }
+            }
+            g_doublemax( &max_delta_phase );
+            g_doublemax( &max_delta_norm );
+            min_det_V = -min_det_V;
+            g_doublemax( &min_det_V );
+            g_doublemax( &max_det_V );
+            min_det_V = -min_det_V;
+            min_eigen = -min_eigen;
+            g_doublemax( &min_eigen );
+            g_doublemax( &max_eigen );
+            min_eigen = -min_eigen;
+            min_denom = -min_denom;
+            g_doublemax( &min_denom );
+            min_denom = -min_denom;
+            node0_printf("PHASE_Y maximum jump: %28.14g\n", max_delta_phase );
+            node0_printf("NORM_W maximum jump: %28.14g\n", max_delta_norm );
+            node0_printf("DET_V minimum: %28.14g\n", min_det_V);
+            node0_printf("DET_V maximum: %28.14g\n", max_det_V);
+            node0_printf("(V^+V) eigenvalue minimum: %28.14g\n", min_eigen);
+            node0_printf("(V^+V) eigenvalue maximum: %28.14g\n", max_eigen);
+            node0_printf("denom=ws*(us*vs-ws)  minimum: %28.14g\n", min_denom);
+            node0_printf("Deviation from unitary |W^+W-1|  maximum: %28.14g\n", Wm1unit);
+            }
+#endif /* HISQ_*/
+            // Q
+            node0_printf("PQPQP_FGI:  Q[ dt / 2] step %d\n",step);
+            update_u                  ( 0.5 * epsilon);
+            // P
+            if(step == steps){// last step - do regular update
+                node0_printf("PQPQP_FGI:  P[lam dt] step %d\n",step);
+                iters += update_h_rhmc( lambda * epsilon, multi_x);
+            } else {
+                node0_printf("PQPQP_FGI:  P[2 lam dt] step %d\n",step);
+                iters += update_h_rhmc( 2.0*lambda * epsilon, multi_x);
+            }
+            /* reunitarize the gauge field */
+            reunitarize_ks();
+        }
     break;
 
     case INT_5G1F:
