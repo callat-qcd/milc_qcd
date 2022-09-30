@@ -11,40 +11,42 @@ MAKEFILE = Makefile
 #----------------------------------------------------------------------
 #  User choices - edit to suit 
 #----------------------------------------------------------------------
-# 1. Machine architecture.  Controls optimization flags here and in libraries.
+# 1. Host and accelerator architecture.  Controls optimization flags here and in libraries.
 #    Can control BINEXT below, a suffix appended to the name of the executable.
 
-ARCH ?= # skx knl knc hsw pow8 pow9
+ARCH ?= # skx knl hsw pow8 pow9
+GPU_ARCH ?= # nvidia amd intel
 
 #----------------------------------------------------------------------
 # 2. Compiler family
 
-COMPILER ?= gnu # intel, ibm, portland, cray-intel
+COMPILER ?= gnu # intel, ibm, cray-intel, rocm
+OFFLOAD ?= # CUDA HIP SYCL OpenMP
 
 #----------------------------------------------------------------------
 # 3. MPP vs Scalar
 
-# Compiling for a parallel machine?  blank for a scalar machine
+# Compiling with MPI?  false for a scalar machine
 MPP ?= false
 
 #----------------------------------------------------------------------
-# 4. Precision 
+# 4. Generic Precision 
 
 # 1 = single precision; 2 = double
-PRECISION ?= 1
+PRECISION ?= 2
 
 #----------------------------------------------------------------------
-# 5. Compiler
+# 5. Set compiler.
 # Choices include mpicc cc gcc pgcc g++
 
 ifeq ($(strip ${COMPILER}),intel)
 
   ifeq ($(strip ${MPP}),true)
-    MY_CC ?= mpiicc
-    MY_CXX ?= mpiicpc
+    MY_CC ?= mpicc
+    MY_CXX ?= mpicxx
   else
-    MY_CC  ?= icc
-    MY_CXX ?= icpc
+    MY_CC  ?= icx
+    MY_CXX ?= dpcpp
   endif
 
 else ifeq ($(strip ${COMPILER}),cray-intel)
@@ -79,21 +81,32 @@ else ifeq ($(strip ${COMPILER}),ibm)
 
 endif
 
+# Accelerator
+
+ifeq ($(strip ${GPU_ARCH}),intel)
+
+  ifeq ($(strip ${MPP}),true)
+    MY_CC += -cc=icx
+    MY_CXX += -cxx=dpcpp
+  endif
+
+endif
+
+# Offload type
+
+ifeq ($(strip ${OFFLOAD}),SYCL)
+
+  MY_CXX += -fsycl
+
+endif
+
 CC = ${MY_CC}
 CXX = ${MY_CXX}
 
-# Override the above definitions
+# If the above construction doesn't work, override the definitions here
 
-# ifeq ($(strip ${MPP}),true)
-#   CC = mpiicc
-#   CXX = mpiicpc
-# else
-#   CC  = icc
-#   CXX = icpc
-# endif
-
-#CC = /usr/local/mvapich/bin/mpicc  # FNAL
-#CXX =  /usr/local/mvapich/bin/mpiCC  # FNAL
+# CC =
+# CXX =
 
 #----------------------------------------------------------------------
 # 6. Compiler optimization level
@@ -180,8 +193,8 @@ ifeq ($(strip ${COMPILER}),intel)
   OCFLAGS += ${ARCH_FLAG}
   OCXXFLAGS += ${ARCH_FLAG}
   LDFLAGS += ${ARCH_FLAG}
-  OCFLAGS += -parallel-source-info=2 -debug inline-debug-info -qopt-report=5
-  OCXXFLAGS += -parallel-source-info=2 -debug inline-debug-info -qopt-report=5
+  OCFLAGS += -parallel-source-info=2 -debug inline-debug-info -fsave-optimization-record
+  OCXXFLAGS += -parallel-source-info=2 -debug inline-debug-info -fsave-optimization-record
 
   ifeq ($(strip ${OMP}),true)
     OCFLAGS += -qopenmp
@@ -418,6 +431,8 @@ WANT_GF_GPU ?= #true
 WANT_EIG_GPU ?= #true
 WANT_KS_CONT_GPU ?= #true
 WANT_SHIFT_GPU ?= #true
+WANT_SPIN_TASTE_GPU ?= #true
+WANT_GAUGEFIX_OVR_GPU ?= #true
 
 endif
 
@@ -425,19 +440,24 @@ endif
 WANT_MIXED_PRECISION_GPU ?= 0
 
 ifeq ($(strip ${WANTQUDA}),true)
+  ifeq ($(strip ${OFFLOAD}),)
+    OFFLOAD = CUDA
+  endif
 
   QUDA_HOME ?= ${HOME}/quda
 
   INCQUDA = -I${QUDA_HOME}/include -I${QUDA_HOME}/tests
   PACKAGE_HEADERS += ${QUDA_HOME}/include
-  LIBQUDA = -Wl,-rpath ${QUDA_HOME}/lib -L${QUDA_HOME}/lib -lquda -ldl
+  LIBQUDA ?= -Wl,-rpath ${QUDA_HOME}/lib -L${QUDA_HOME}/lib -lquda
   QUDA_LIBRARIES = ${QUDA_HOME}/lib
-
-  CUDA_HOME ?= /usr/local/cuda
-  INCQUDA += -I${CUDA_HOME}/include
-  PACKAGE_HEADERS += ${CUDA_HOME}/include
-  LIBQUDA += -L${CUDA_HOME}/lib64 -lcudart -lcuda -lcublas -lcufft -lcublas
   QUDA_HEADERS = ${QUDA_HOME}/include
+
+  ifeq ($(strip ${OFFLOAD}),CUDA)
+    CUDA_HOME ?= /usr/local/cuda
+    INCQUDA += -I${CUDA_HOME}/include
+    PACKAGE_HEADERS += ${CUDA_HOME}/include
+    LIBQUDA += -L${CUDA_HOME}/lib64 -L${CUDA_MATH}/lib64 -L${CUDA_COMP}/lib -lcudart -lcuda -lcublas -lcufft -ldl
+  endif
 
 # Definitions of compiler macros -- don't change.  Could go into a Make_template_QUDA
 
@@ -479,8 +499,18 @@ ifeq ($(strip ${WANTQUDA}),true)
   endif
 
   ifeq ($(strip ${WANT_SHIFT_GPU}),true)
-    HAVE_SHIFT_QUDA = true
+    HAVE_SHIFT_GPU = true
     CGPU += -DUSE_SHIFT_QUDA
+  endif
+
+  ifeq ($(strip ${WANT_SPIN_TASTE_GPU}),true)
+    HAVE_SPIN_TASTE_GPU = true
+    CGPU += -DUSE_SPIN_TASTE_QUDA
+  endif
+
+  ifeq ($(strip ${WANT_GAUGEFIX_OVR_GPU}),true)
+    HAVE_GAUGEFIX_OVR_QUDA = true
+    CGPU += -DUSE_GAUGEFIX_OVR_QUDA
   endif
 
   ifeq ($(strip ${WANT_MIXED_PRECISION_GPU}),1)
@@ -489,7 +519,7 @@ ifeq ($(strip ${WANTQUDA}),true)
     CGPU += -DMAX_MIXED # use half precision where appropriate
   endif
 
-# Verbosity choices: 
+# Verbosity choices:
 # SET_QUDA_SILENT, SET_QUDA_SUMMARIZE, SET_QUDA_VERBOSE, SET_QUDA_DEBUG_VERBOSE
 
   CGPU += -DSET_QUDA_SUMMARIZE
@@ -616,6 +646,7 @@ ifeq ($(strip ${WANTGRID}), true)
 
   CPHI += -DGRID_MULTI_CG=GRID_5DCG # Choices: GRID_BLOCKCG GRID_5DCG GRID_MRHSCG
   CPHI += -DGRID_SHMEM_MAX=2048
+  CPHI += -DGRID_ACCELERATOR_THREADS=8
 
   ifeq ($(strip ${MPP}),true)
     ifeq ($(strip ${ARCH}),knl)

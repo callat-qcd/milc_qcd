@@ -1,6 +1,7 @@
 /******** setup.c *********/
 /* MIMD version 7 */
 
+#define _POSIX_C_SOURCE 200112L /* for gethostname */
 #define IF_OK if(status==0)
 
 #include "ks_spectrum_includes.h"
@@ -8,7 +9,6 @@
 #include <string.h>
 #include "params.h"
 #include <unistd.h>
-//extern int gethostname (char *__name, size_t __len); // Should get this from unistd.h
 #ifdef U1_FIELD
 #include "../include/io_u1lat.h"
 #endif
@@ -110,7 +110,11 @@ static int initial_set(void){
 			   param.ionode_geometry, 4);
 #endif
 #endif
-    IF_OK status += get_i(stdin, prompt,"iseed", &param.iseed );
+    IF_OK {
+      int iseed_in;
+      status += get_i(stdin, prompt,"iseed", &iseed_in);
+      param.iseed = iseed_in;
+    }
     IF_OK status += get_s(stdin, prompt,"job_id",param.job_id);
     
     if(status>0) param.stopflag=1; else param.stopflag=0;
@@ -177,7 +181,7 @@ int readin(int prompt) {
 
     IF_OK if (prompt==1) 
       printf("enter 'no_gauge_fix', or 'coulomb_gauge_fix'\n");
-    IF_OK scanf("%s",savebuf);
+    IF_OK status += scanf("%s",savebuf)==1 ? 0 : 1;
     IF_OK printf("%s\n",savebuf);
     IF_OK {
       if(strcmp("coulomb_gauge_fix",savebuf) == 0 ){
@@ -595,7 +599,7 @@ int readin(int prompt) {
 
       IF_OK {
 	IF_OK status += get_i(stdin, prompt,"precision", &param.qic[0].prec );
-#if ! defined(HAVE_QOP) && ! defined(USE_CG_GPU) && !defined(HAVE_QPHIX)
+#if ! defined(HAVE_QOP) && ! defined(USE_CG_GPU) && !defined(HAVE_QPHIX) && ! defined(HAVE_GRID)
 	IF_OK if(param.qic[0].prec != MILC_PRECISION){
 	  node0_printf("WARNING: Compiled precision %d overrides request\n",MILC_PRECISION);
 	  node0_printf("QOP or CG_GPU or QPHIX compilation is required for mixed precision\n");
@@ -961,7 +965,7 @@ int readin(int prompt) {
       IF_OK for(i = 0; i < param.num_corr_m[ipair]; i++){
 	int ok,m;
 	char meson_label_in[MAX_MESON_LABEL], mom_label_in[MAX_MOM_LABEL],
-	  spin_taste_string[8], phase_lab[4], 
+	  spin_taste_string[16], phase_lab[4], 
 	  factor_op[2], parity_x_in[3], parity_y_in[3], parity_z_in[3];
 	double factor;
 	
@@ -1234,11 +1238,13 @@ int readin(int prompt) {
   }
 
   /* Contribution from the propagator epsilons */
-  nprop = param.end_prop[param.num_set-1] + 1;
-  for(i = 0; i < nprop; i++)
-    param.ksp[i].naik_term_epsilon_index = 
-      fill_eps_naik(eps_naik, 
-		    &n_naiks, param.ksp[i].naik_term_epsilon);
+  if(param.num_set > 0){
+    nprop = param.end_prop[param.num_set-1] + 1;
+    for(i = 0; i < nprop; i++)
+      param.ksp[i].naik_term_epsilon_index = 
+	fill_eps_naik(eps_naik, 
+		      &n_naiks, param.ksp[i].naik_term_epsilon);
+  }
 
   /* Requests from any embedded inverse and hopping operators in the
      modified ops */
@@ -1333,9 +1339,10 @@ int readin(int prompt) {
   else
     Nvecs_tot = Nvecs_max;
 
-  eigVal = (double *)malloc(Nvecs_tot*sizeof(double));
-  eigVec = (su3_vector **)malloc(Nvecs_tot*sizeof(su3_vector *));
-  for(i = 0; i < Nvecs_tot; i++)
+  Nvecs_alloc = Nvecs_tot;
+  eigVal = (double *)malloc(Nvecs_alloc*sizeof(double));
+  eigVec = (su3_vector **)malloc(Nvecs_alloc*sizeof(su3_vector *));
+  for(i = 0; i < Nvecs_alloc; i++)
     eigVec[i] = (su3_vector *)malloc(sites_on_node*sizeof(su3_vector));
 
   /* Do whatever is needed to get eigenpairs */
