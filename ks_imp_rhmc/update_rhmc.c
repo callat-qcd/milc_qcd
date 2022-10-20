@@ -14,133 +14,133 @@
  at same time.
 
  Integrators:
-    LEAPFROG - traditional 
-    OMELYAN -
-       See Takaishi and de Forcrand hep-lat/0505020
-      "lambda" is adjustable parameter.  At lambda=1 this is just two
-      leapfrog steps of length epsilon. Note my lambda is 4X the lambda in
-      Takaishi and de Forcrand and my epsilon is 1/2 theirs.  This makes
-      epsilon the same as for the leapfrog algorithm.
-      Omelyan "optimum lambda" 4*0.1932
+ LEAPFROG - traditional 
+ OMELYAN -
+ See Takaishi and de Forcrand hep-lat/0505020
+ "lambda" is adjustable parameter.  At lambda=1 this is just two
+ leapfrog steps of length epsilon. Note my lambda is 4X the lambda in
+ Takaishi and de Forcrand and my epsilon is 1/2 theirs.  This makes
+ epsilon the same as for the leapfrog algorithm.
+ Omelyan "optimum lambda" 4*0.1932
 
-   2G1F -
-     Two omelyan steps for gauge force per one Omelyan step for fermion
-     ("epsilon" is time for one fermion step)
-        update U to epsilon*(1/4-alpha/2)
-        Update H by epsilon*1/2*gauge_force
-        update U to epsilon*(1/2-beta)
-        Update H by epsilon*fermion_force
-        update U to epsilon*(3/4+alpha/2)
-        Update H by epsilon*1/2*gauge_force
+ 2G1F -
+ Two omelyan steps for gauge force per one Omelyan step for fermion
+ ("epsilon" is time for one fermion step)
+ update U to epsilon*(1/4-alpha/2)
+ Update H by epsilon*1/2*gauge_force
+ update U to epsilon*(1/2-beta)
+ Update H by epsilon*fermion_force
+ update U to epsilon*(3/4+alpha/2)
+ Update H by epsilon*1/2*gauge_force
 
-        update U to epsilon*(5/4-alpha/2)
-        Update H by epsilon*1/2*gauge_force
-        update U to epsilon*(3/2+beta)
-        Update H by epsilon*fermion_force
-        update U to epsilon*(7/4+alpha/2)
-        Update H by epsilon*1/2*gauge_force
-        update U to epsilon*(2)
-   3G1F -
-     Three omelyan steps for gauge force per one Omelyan step for fermion
-     ("epsilon" is time for one fermion step)
-        update U to epsilon*(1/6-alpha/3)
-        Update H by epsilon*1/3*gauge_force
-        update U to epsilon*(1/2-beta)
-        Update H by epsilon*fermion_force
-        update U to epsilon*(3/6+alpha/3)
-        Update H by epsilon*1/3*gauge_force
+ update U to epsilon*(5/4-alpha/2)
+ Update H by epsilon*1/2*gauge_force
+ update U to epsilon*(3/2+beta)
+ Update H by epsilon*fermion_force
+ update U to epsilon*(7/4+alpha/2)
+ Update H by epsilon*1/2*gauge_force
+ update U to epsilon*(2)
+ 3G1F -
+ Three omelyan steps for gauge force per one Omelyan step for fermion
+ ("epsilon" is time for one fermion step)
+ update U to epsilon*(1/6-alpha/3)
+ Update H by epsilon*1/3*gauge_force
+ update U to epsilon*(1/2-beta)
+ Update H by epsilon*fermion_force
+ update U to epsilon*(3/6+alpha/3)
+ Update H by epsilon*1/3*gauge_force
 
-        update U to epsilon*(5/6-alpha/3)
-        Update H by epsilon*1/3*gauge_force
-        update U to epsilon*(7/6+alpha/3)
-        Update H by epsilon*1/3*gauge_force
+ update U to epsilon*(5/6-alpha/3)
+ Update H by epsilon*1/3*gauge_force
+ update U to epsilon*(7/6+alpha/3)
+ Update H by epsilon*1/3*gauge_force
 
-        update U to epsilon*(9/6-alpha/3)
-        Update H by epsilon*1/3*gauge_force
-        update U to epsilon*(3/2+beta)
-        Update H by epsilon*fermion_force
-        update U to epsilon*(11/6+alpha/3)
-        Update H by epsilon*1/3*gauge_force
-        update U to epsilon*(2)
-   5G1F -
-     Five omelyan steps for gauge force per one Omelyan step for fermion
-     ("epsilon" is time for one fermion step)
-        2 gauge
-        update U to epsilon*(1/10-alpha/5)
-        Update H by epsilon*1/5*gauge_force
-        update U to epsilon*(3/10+alpha/5)
-        Update H by epsilon*1/5*gauge_force
-        1 ferm
-        update U to epsilon*(1/2-beta)
-        Update H by epsilon*fermion_force
-        3 gauge
-        update U to epsilon*(5/10-alpha/5)
-        Update H by epsilon*1/5*gauge_force
-        update U to epsilon*(7/10+alpha/5)
-        Update H by epsilon*1/5*gauge_force
-        update U to epsilon*(9/10-alpha/5)
-        Update H by epsilon*1/5*gauge_force
-        3 gauge
-        update U to epsilon*(11/10+alpha/5)
-        Update H by epsilon*1/5*gauge_force
-        update U to epsilon*(13/10-alpha/5)
-        Update H by epsilon*1/5*gauge_force
-        update U to epsilon*(15/10+alpha/5)
-        Update H by epsilon*1/5*gauge_force
-        1 ferm
-        update U to epsilon*(3/2+beta)
-        Update H by epsilon*fermion_force
-        2 gauge
-        update U to epsilon*(17/10-alpha/5)
-        Update H by epsilon*1/5*gauge_force
-        update U to epsilon*(19/10+alpha/5)
-        Update H by epsilon*1/5*gauge_force
-        finish
-        update U to epsilon*(2)
-   6G1F -
-     Six omelyan steps for gauge force per one Omelyan step for fermion
-     ("epsilon" is time for one fermion step)
-        3 gauge
-        update U to epsilon*(1/12-alpha/6)
-        Update H by epsilon*1/6*gauge_force
-        update U to epsilon*(3/12+alpha/6)
-        Update H by epsilon*1/6*gauge_force
-        update U to epsilon*(5/12-alpha/6)
-        Update H by epsilon*1/6*gauge_force
-        1 ferm
-        update U to epsilon*(1/2-beta)
-        Update H by epsilon*fermion_force
-        3 gauge
-        update U to epsilon*(7/12+alpha/6)
-        Update H by epsilon*1/6*gauge_force
-        update U to epsilon*(9/12-alpha/6)
-        Update H by epsilon*1/6*gauge_force
-        update U to epsilon*(11/12+alpha/6)
-        Update H by epsilon*1/6*gauge_force
-        3 gauge
-        update U to epsilon*(13/12-alpha/6)
-        Update H by epsilon*1/6*gauge_force
-        update U to epsilon*(15/12+alpha/6)
-        Update H by epsilon*1/6*gauge_force
-        update U to epsilon*(17/12-alpha/6)
-        Update H by epsilon*1/6*gauge_force
-        1 ferm
-        update U to epsilon*(3/2+beta)
-        Update H by epsilon*fermion_force
-        3 gauge
-        update U to epsilon*(19/12+alpha/6)
-        Update H by epsilon*1/6*gauge_force
-        update U to epsilon*(21/12-alpha/6)
-        Update H by epsilon*1/6*gauge_force
-        update U to epsilon*(23/12+alpha/6)
-        Update H by epsilon*1/6*gauge_force
-        finish
-        update U to epsilon*(2)
-   2EPS_3TO1
-        Trial version using different step sizes for the two factors in the determinant.
-        eg 3*eps for light/strange ratio, eps for strange^(3/4)
-        Three Omelyan steps for gauge and factor_two force, one leapfrog step for factor 
-        one force (should upgrade to Omelyan for each)
+ update U to epsilon*(9/6-alpha/3)
+ Update H by epsilon*1/3*gauge_force
+ update U to epsilon*(3/2+beta)
+ Update H by epsilon*fermion_force
+ update U to epsilon*(11/6+alpha/3)
+ Update H by epsilon*1/3*gauge_force
+ update U to epsilon*(2)
+ 5G1F -
+ Five omelyan steps for gauge force per one Omelyan step for fermion
+ ("epsilon" is time for one fermion step)
+ 2 gauge
+ update U to epsilon*(1/10-alpha/5)
+ Update H by epsilon*1/5*gauge_force
+ update U to epsilon*(3/10+alpha/5)
+ Update H by epsilon*1/5*gauge_force
+ 1 ferm
+ update U to epsilon*(1/2-beta)
+ Update H by epsilon*fermion_force
+ 3 gauge
+ update U to epsilon*(5/10-alpha/5)
+ Update H by epsilon*1/5*gauge_force
+ update U to epsilon*(7/10+alpha/5)
+ Update H by epsilon*1/5*gauge_force
+ update U to epsilon*(9/10-alpha/5)
+ Update H by epsilon*1/5*gauge_force
+ 3 gauge
+ update U to epsilon*(11/10+alpha/5)
+ Update H by epsilon*1/5*gauge_force
+ update U to epsilon*(13/10-alpha/5)
+ Update H by epsilon*1/5*gauge_force
+ update U to epsilon*(15/10+alpha/5)
+ Update H by epsilon*1/5*gauge_force
+ 1 ferm
+ update U to epsilon*(3/2+beta)
+ Update H by epsilon*fermion_force
+ 2 gauge
+ update U to epsilon*(17/10-alpha/5)
+ Update H by epsilon*1/5*gauge_force
+ update U to epsilon*(19/10+alpha/5)
+ Update H by epsilon*1/5*gauge_force
+ finish
+ update U to epsilon*(2)
+ 6G1F -
+ Six omelyan steps for gauge force per one Omelyan step for fermion
+ ("epsilon" is time for one fermion step)
+ 3 gauge
+ update U to epsilon*(1/12-alpha/6)
+ Update H by epsilon*1/6*gauge_force
+ update U to epsilon*(3/12+alpha/6)
+ Update H by epsilon*1/6*gauge_force
+ update U to epsilon*(5/12-alpha/6)
+ Update H by epsilon*1/6*gauge_force
+ 1 ferm
+ update U to epsilon*(1/2-beta)
+ Update H by epsilon*fermion_force
+ 3 gauge
+ update U to epsilon*(7/12+alpha/6)
+ Update H by epsilon*1/6*gauge_force
+ update U to epsilon*(9/12-alpha/6)
+ Update H by epsilon*1/6*gauge_force
+ update U to epsilon*(11/12+alpha/6)
+ Update H by epsilon*1/6*gauge_force
+ 3 gauge
+ update U to epsilon*(13/12-alpha/6)
+ Update H by epsilon*1/6*gauge_force
+ update U to epsilon*(15/12+alpha/6)
+ Update H by epsilon*1/6*gauge_force
+ update U to epsilon*(17/12-alpha/6)
+ Update H by epsilon*1/6*gauge_force
+ 1 ferm
+ update U to epsilon*(3/2+beta)
+ Update H by epsilon*fermion_force
+ 3 gauge
+ update U to epsilon*(19/12+alpha/6)
+ Update H by epsilon*1/6*gauge_force
+ update U to epsilon*(21/12-alpha/6)
+ Update H by epsilon*1/6*gauge_force
+ update U to epsilon*(23/12+alpha/6)
+ Update H by epsilon*1/6*gauge_force
+ finish
+ update U to epsilon*(2)
+ 2EPS_3TO1
+ Trial version using different step sizes for the two factors in the determinant.
+ eg 3*eps for light/strange ratio, eps for strange^(3/4)
+ Three Omelyan steps for gauge and factor_two force, one leapfrog step for factor 
+ one force (should upgrade to Omelyan for each)
 */
 #include "ks_imp_includes.h"	/* definitions files and prototypes */
 #ifdef MILC_GLOBAL_DEBUG
@@ -179,163 +179,163 @@ int update() {
 
   int_alg = INT_ALG;
   switch(int_alg){
-    case INT_LEAPFROG:
-      node0_printf("Leapfrog integration, steps= %d eps= %e\n",steps,epsilon);
-      n_multi_x = max_rat_order;
-      for(j=0,i=0; i<n_pseudo; i++){j+=rparam[i].MD.order;}
-      if(j>n_multi_x)n_multi_x=j; // Fermion force needs all multi_x at once in this algorithm
+  case INT_LEAPFROG:
+    node0_printf("Leapfrog integration, steps= %d eps= %e\n",steps,epsilon);
+    n_multi_x = max_rat_order;
+    for(j=0,i=0; i<n_pseudo; i++){j+=rparam[i].MD.order;}
+    if(j>n_multi_x)n_multi_x=j; // Fermion force needs all multi_x at once in this algorithm
     break;
-    case INT_OMELYAN:
-      lambda = 0.8;
-      node0_printf("Omelyan integration, steps= %d eps= %e lambda= %e\n",steps,epsilon,lambda);
-      if (steps %2 != 0 ){
-        node0_printf("BONEHEAD! need even number of steps\n");
-        terminate(1);
-      }
-      n_multi_x = max_rat_order;
-      for(j=0,i=0; i<n_pseudo; i++){j+=rparam[i].MD.order;}
-      if(j>n_multi_x)n_multi_x=j; // Fermion force needs all multi_x at once in this algorithm
+  case INT_OMELYAN:
+    lambda = 0.8;
+    node0_printf("Omelyan integration, steps= %d eps= %e lambda= %e\n",steps,epsilon,lambda);
+    if (steps %2 != 0 ){
+      node0_printf("BONEHEAD! need even number of steps\n");
+      terminate(1);
+    }
+    n_multi_x = max_rat_order;
+    for(j=0,i=0; i<n_pseudo; i++){j+=rparam[i].MD.order;}
+    if(j>n_multi_x)n_multi_x=j; // Fermion force needs all multi_x at once in this algorithm
     break;
-    case INT_2G1F:
-      alpha = 0.1; beta = 0.1;
-      node0_printf("Omelyan integration, 2 gauge for one 1 fermion step, steps= %d eps= %e alpha= %e beta= %e\n",
-          steps,epsilon,alpha,beta);
-      if (steps %2 != 0 ){
-          node0_printf("BONEHEAD! need even number of steps\n"); terminate(0);
-      }
-      n_multi_x = max_rat_order;
-      for(j=0,i=0; i<n_pseudo; i++){j+=rparam[i].MD.order;}
-      if(j>n_multi_x)n_multi_x=j; // Fermion force needs all multi_x at once in this algorithm
+  case INT_2G1F:
+    alpha = 0.1; beta = 0.1;
+    node0_printf("Omelyan integration, 2 gauge for one 1 fermion step, steps= %d eps= %e alpha= %e beta= %e\n",
+                 steps,epsilon,alpha,beta);
+    if (steps %2 != 0 ){
+      node0_printf("BONEHEAD! need even number of steps\n"); terminate(0);
+    }
+    n_multi_x = max_rat_order;
+    for(j=0,i=0; i<n_pseudo; i++){j+=rparam[i].MD.order;}
+    if(j>n_multi_x)n_multi_x=j; // Fermion force needs all multi_x at once in this algorithm
     break;
-    case INT_3G1F:
-      alpha = 0.1; beta = 0.1;
-      node0_printf("Omelyan integration, 3 gauge for one 1 fermion step, steps= %d eps= %e alpha= %e beta= %e\n",
-          steps,epsilon,alpha,beta);
-      if (steps %2 != 0 ){
-          node0_printf("BONEHEAD! need even number of steps\n"); terminate(0);
-      }
-      n_multi_x = max_rat_order;
-      for(j=0,i=0; i<n_pseudo; i++){j+=rparam[i].MD.order;}
-      if(j>n_multi_x)n_multi_x=j; // Fermion force needs all multi_x at once in this algorithm
-      break;
-    case INT_PQPQP:
-        node0_printf("PQPQP Integrator: steps= %d eps= %e\n", steps, epsilon);
-        //if (steps %2 != 0 ){
-        //    node0_printf("BONEHEAD! need even number of steps\n"); terminate(0);
-        //}
-        if(getenv("OUTER_LAMBDA")) {
-            outer_lambda = atof(strdup(getenv("OUTER_LAMBDA")));
-            node0_printf("             ENV declared OUTER_LAMBDA = %e\n", outer_lambda);
-        } else {
-            outer_lambda = 1./6; // this eliminates the (1 - 6 lam) {T,{S,{T}} dt**2 term
-            node0_printf("             default OUTER_LAMBDA = %e\n", outer_lambda);
-        }
-        if(getenv("INNER_LAMBDA")){
-            inner_lambda = atof(strdup(getenv("INNER_LAMBDA")));
-            node0_printf("             ENV declared INNER_LAMBDA = %e\n", inner_lambda);
-        } else {
-            inner_lambda = 1./6;
-            node0_printf("             default INNER_LAMBDA = %e\n", inner_lambda);            
-        }
-        if(getenv("INNER_STEPS")){
-            inner_steps = atof(strdup(getenv("INNER_STEPS")));
-            node0_printf("             ENV declared INNER_STEPS = %d\n", inner_steps);
-        } else {
-            inner_steps = 1;
-            node0_printf("             default INNER_STEPS = %d\n", inner_steps);
-        }
-        if(getenv("Q_INNER")){
-            q_inner = atof(strdup(getenv("Q_INNER")));
-            node0_printf("             ENV declared Q_INNER type = %d\n", q_inner);
-        } else {
-            q_inner = 0;
-            node0_printf("             default Q_INNER type = %d\n", q_inner);
-        }
-        n_multi_x = max_rat_order;
-        for(j=0,i=0; i<n_pseudo; i++){j+=rparam[i].MD.order;}
-        if(j>n_multi_x)n_multi_x=j; // Fermion force needs all multi_x at once in this algorithm
+  case INT_3G1F:
+    alpha = 0.1; beta = 0.1;
+    node0_printf("Omelyan integration, 3 gauge for one 1 fermion step, steps= %d eps= %e alpha= %e beta= %e\n",
+                 steps,epsilon,alpha,beta);
+    if (steps %2 != 0 ){
+      node0_printf("BONEHEAD! need even number of steps\n"); terminate(0);
+    }
+    n_multi_x = max_rat_order;
+    for(j=0,i=0; i<n_pseudo; i++){j+=rparam[i].MD.order;}
+    if(j>n_multi_x)n_multi_x=j; // Fermion force needs all multi_x at once in this algorithm
+    break;
+  case INT_PQPQP:
+    node0_printf("PQPQP Integrator: steps= %d eps= %e\n", steps, epsilon);
+    //if (steps %2 != 0 ){
+    //    node0_printf("BONEHEAD! need even number of steps\n"); terminate(0);
+    //}
+    if(getenv("OUTER_LAMBDA")) {
+      outer_lambda = atof(strdup(getenv("OUTER_LAMBDA")));
+      node0_printf("             ENV declared OUTER_LAMBDA = %e\n", outer_lambda);
+    } else {
+      outer_lambda = 1./6; // this eliminates the (1 - 6 lam) {T,{S,{T}} dt**2 term
+      node0_printf("             default OUTER_LAMBDA = %e\n", outer_lambda);
+    }
+    if(getenv("INNER_LAMBDA")){
+      inner_lambda = atof(strdup(getenv("INNER_LAMBDA")));
+      node0_printf("             ENV declared INNER_LAMBDA = %e\n", inner_lambda);
+    } else {
+      inner_lambda = 1./6;
+      node0_printf("             default INNER_LAMBDA = %e\n", inner_lambda);            
+    }
+    if(getenv("INNER_STEPS")){
+      inner_steps = atof(strdup(getenv("INNER_STEPS")));
+      node0_printf("             ENV declared INNER_STEPS = %d\n", inner_steps);
+    } else {
+      inner_steps = 1;
+      node0_printf("             default INNER_STEPS = %d\n", inner_steps);
+    }
+    if(getenv("Q_INNER")){
+      q_inner = atof(strdup(getenv("Q_INNER")));
+      node0_printf("             ENV declared Q_INNER type = %d\n", q_inner);
+    } else {
+      q_inner = 0;
+      node0_printf("             default Q_INNER type = %d\n", q_inner);
+    }
+    n_multi_x = max_rat_order;
+    for(j=0,i=0; i<n_pseudo; i++){j+=rparam[i].MD.order;}
+    if(j>n_multi_x)n_multi_x=j; // Fermion force needs all multi_x at once in this algorithm
     break;
 
-    case INT_FGI_PQPQP:
-        node0_printf("FGI PQPQP Integrator: steps= %d eps= %e\n", steps, epsilon);
-        if(getenv("OUTER_LAMBDA")) {
-            outer_lambda = atof(strdup(getenv("OUTER_LAMBDA")));
-            node0_printf("             ENV declared OUTER_LAMBDA = %e\n", outer_lambda);
-        } else {
-            outer_lambda = 1./6; // this eliminates the (1 - 6 lam) {T,{S,{T}} dt**2 term
-            node0_printf("             default OUTER_LAMBDA = %e\n", outer_lambda);
-        }
-        if(getenv("INNER_LAMBDA")){
-            inner_lambda = atof(strdup(getenv("INNER_LAMBDA")));
-            node0_printf("             ENV declared INNER_LAMBDA = %e\n", inner_lambda);
-        } else {
-            inner_lambda = 1./6;
-            node0_printf("             default INNER_LAMBDA = %e\n", inner_lambda);            
-        }
+  case INT_FGI_PQPQP:
+    node0_printf("FGI PQPQP Integrator: steps= %d eps= %e\n", steps, epsilon);
+    if(getenv("OUTER_LAMBDA")) {
+      outer_lambda = atof(strdup(getenv("OUTER_LAMBDA")));
+      node0_printf("             ENV declared OUTER_LAMBDA = %e\n", outer_lambda);
+    } else {
+      outer_lambda = 1./6; // this eliminates the (1 - 6 lam) {T,{S,{T}} dt**2 term
+      node0_printf("             default OUTER_LAMBDA = %e\n", outer_lambda);
+    }
+    if(getenv("INNER_LAMBDA")){
+      inner_lambda = atof(strdup(getenv("INNER_LAMBDA")));
+      node0_printf("             ENV declared INNER_LAMBDA = %e\n", inner_lambda);
+    } else {
+      inner_lambda = 1./6;
+      node0_printf("             default INNER_LAMBDA = %e\n", inner_lambda);            
+    }
 	// This ENVAR governs the number of inner steps taken by a multi
 	// time scale integrator.
-        if(getenv("INNER_STEPS")){
-            inner_steps = atof(strdup(getenv("INNER_STEPS")));
-            node0_printf("             ENV declared INNER_STEPS = %d\n", inner_steps);
-        } else {
-            inner_steps = 1;
-            node0_printf("             default INNER_STEPS = %d\n", inner_steps);
-        }
+    if(getenv("INNER_STEPS")){
+      inner_steps = atof(strdup(getenv("INNER_STEPS")));
+      node0_printf("             ENV declared INNER_STEPS = %d\n", inner_steps);
+    } else {
+      inner_steps = 1;
+      node0_printf("             default INNER_STEPS = %d\n", inner_steps);
+    }
 	// This ENVAR governs which gauge integrator to use:
 	// Q_INNER = 0 : use the simple single time step Q integrator.
 	// Q_INNER = 1 : use the PQP integrator.
 	// Q_INNER = 2 : use the PQPQP integrator with INNER_STEPS inner steps.
 	// Q_INNER = 3 : use the FGI integrator with INNER_STEPS inner steps.
-        if(getenv("Q_INNER")){
-            q_inner = atof(strdup(getenv("Q_INNER")));
-            node0_printf("             ENV declared Q_INNER type = %d\n", q_inner);
-        } else {
-            q_inner = 0;
-            node0_printf("             default Q_INNER type = %d\n", q_inner);
-        }
-        n_multi_x = max_rat_order;
-        for(j=0,i=0; i<n_pseudo; i++){j+=rparam[i].MD.order;}
-        if(j>n_multi_x)n_multi_x=j; // Fermion force needs all multi_x at once in this algorithm
+    if(getenv("Q_INNER")){
+      q_inner = atof(strdup(getenv("Q_INNER")));
+      node0_printf("             ENV declared Q_INNER type = %d\n", q_inner);
+    } else {
+      q_inner = 0;
+      node0_printf("             default Q_INNER type = %d\n", q_inner);
+    }
+    n_multi_x = max_rat_order;
+    for(j=0,i=0; i<n_pseudo; i++){j+=rparam[i].MD.order;}
+    if(j>n_multi_x)n_multi_x=j; // Fermion force needs all multi_x at once in this algorithm
     break;
 
     
-    case INT_5G1F:
-      alpha = 0.1; beta = 0.1;
-      node0_printf("Omelyan integration, 5 gauge for one 1 fermion step, steps= %d eps= %e alpha= %e beta= %e\n",
-          steps,epsilon,alpha,beta);
-      if (steps %2 != 0 ){
-          node0_printf("BONEHEAD! need even number of steps\n"); terminate(0);
-      }
-      n_multi_x = max_rat_order;
-      for(j=0,i=0; i<n_pseudo; i++){j+=rparam[i].MD.order;}
-      if(j>n_multi_x)n_multi_x=j; // Fermion force needs all multi_x at once in this algorithm
+  case INT_5G1F:
+    alpha = 0.1; beta = 0.1;
+    node0_printf("Omelyan integration, 5 gauge for one 1 fermion step, steps= %d eps= %e alpha= %e beta= %e\n",
+                 steps,epsilon,alpha,beta);
+    if (steps %2 != 0 ){
+      node0_printf("BONEHEAD! need even number of steps\n"); terminate(0);
+    }
+    n_multi_x = max_rat_order;
+    for(j=0,i=0; i<n_pseudo; i++){j+=rparam[i].MD.order;}
+    if(j>n_multi_x)n_multi_x=j; // Fermion force needs all multi_x at once in this algorithm
     break;
-    case INT_6G1F:
-      alpha = 0.1; beta = 0.1;
-      node0_printf("Omelyan integration, 6 gauge for one 1 fermion step, steps= %d eps= %e alpha= %e beta= %e\n",
-          steps,epsilon,alpha,beta);
-      if (steps %2 != 0 ){
-          node0_printf("BONEHEAD! need even number of steps\n"); terminate(0);
-      }
-      n_multi_x = max_rat_order;
-      for(j=0,i=0; i<n_pseudo; i++){j+=rparam[i].MD.order;}
-      if(j>n_multi_x)n_multi_x=j; // Fermion force needs all multi_x at once in this algorithm
+  case INT_6G1F:
+    alpha = 0.1; beta = 0.1;
+    node0_printf("Omelyan integration, 6 gauge for one 1 fermion step, steps= %d eps= %e alpha= %e beta= %e\n",
+                 steps,epsilon,alpha,beta);
+    if (steps %2 != 0 ){
+      node0_printf("BONEHEAD! need even number of steps\n"); terminate(0);
+    }
+    n_multi_x = max_rat_order;
+    for(j=0,i=0; i<n_pseudo; i++){j+=rparam[i].MD.order;}
+    if(j>n_multi_x)n_multi_x=j; // Fermion force needs all multi_x at once in this algorithm
     break;
-    case INT_2EPS_3TO1:
-      lambda = 0.8;
-      node0_printf("Omelyan integration, steps= %d eps= %e lambda= %e\n",steps,epsilon,lambda);
-      node0_printf("3X step size leapfrog for factor 1 in determinant\n");
-      if ( n_pseudo != 2 ){
-          node0_printf("BONEHEAD! need exactly two pseudofermions\n"); terminate(0);
-      }
-      if (steps %6 != 0 ){
-          node0_printf("BONEHEAD! need 6N number of steps\n"); terminate(0);
-      }
-      n_multi_x = max_rat_order;
+  case INT_2EPS_3TO1:
+    lambda = 0.8;
+    node0_printf("Omelyan integration, steps= %d eps= %e lambda= %e\n",steps,epsilon,lambda);
+    node0_printf("3X step size leapfrog for factor 1 in determinant\n");
+    if ( n_pseudo != 2 ){
+      node0_printf("BONEHEAD! need exactly two pseudofermions\n"); terminate(0);
+    }
+    if (steps %6 != 0 ){
+      node0_printf("BONEHEAD! need 6N number of steps\n"); terminate(0);
+    }
+    n_multi_x = max_rat_order;
     break;
-    default:
-      node0_printf("No integration algorithm, or unknown one\n");
-      terminate(1);
+  default:
+    node0_printf("No integration algorithm, or unknown one\n");
+    terminate(1);
     break;
   }
   
@@ -357,7 +357,7 @@ int update() {
   sumvec = (su3_vector *)malloc( sizeof(su3_vector)*sites_on_node );
   if( sumvec==NULL ){
     printf("update: No room for sumvec\n"); 
-      terminate(1);
+    terminate(1);
   }
   
   /* refresh the momenta */
@@ -376,9 +376,9 @@ int update() {
       restore_fermion_links_from_site(fn_links, prec_gr[iphi]);
       fn = get_fm_links(fn_links);
       grsource_imp_rhmc( F_OFFSET(phi[iphi]), &(rparam[iphi].GR), EVEN,
-			 multi_x, sumvec, rsqmin_gr[iphi], niter_gr[iphi],
-			 prec_gr[iphi], fn[inaik], inaik, 
-			 rparam[iphi].naik_term_epsilon);
+                         multi_x, sumvec, rsqmin_gr[iphi], niter_gr[iphi],
+                         prec_gr[iphi], fn[inaik], inaik, 
+                         rparam[iphi].naik_term_epsilon);
       iphi++;
     }
   }
@@ -391,287 +391,287 @@ int update() {
 #endif
   
   switch(int_alg){
-    case INT_LEAPFROG:
-      /* do "steps" microcanonical steps"  */
-      for(step=1; step <= steps; step++){
-        /* update U's to middle of interval */
-        update_u(0.5*epsilon);
-        /* now update H by full time interval */
-        iters += update_h_rhmc( epsilon, multi_x);
-        /* update U's by half time step to get to even time */
-        update_u(epsilon*0.5);
-        /* reunitarize the gauge field */
-        reunitarize_ks();
-        /*TEMP - monitor action*/if(step%4==0)d_action_rhmc(multi_x,sumvec);
-      }	/* end loop over microcanonical steps */
+  case INT_LEAPFROG:
+    /* do "steps" microcanonical steps"  */
+    for(step=1; step <= steps; step++){
+      /* update U's to middle of interval */
+      update_u(0.5*epsilon);
+      /* now update H by full time interval */
+      iters += update_h_rhmc( epsilon, multi_x);
+      /* update U's by half time step to get to even time */
+      update_u(epsilon*0.5);
+      /* reunitarize the gauge field */
+      reunitarize_ks();
+      /*TEMP - monitor action*/if(step%4==0)d_action_rhmc(multi_x,sumvec);
+    }	/* end loop over microcanonical steps */
     break;
-    case INT_OMELYAN:
-      /* do "steps" microcanonical steps (one "step" = one force evaluation)"  */
-      for(step=2; step <= steps; step+=2){
-        /* update U's and H's - see header comment */
-        update_u(0.5*epsilon*lambda);
-        iters += update_h_rhmc( epsilon, multi_x);
-        update_u(epsilon*(2.0-lambda));
-        iters += update_h_rhmc( epsilon, multi_x);
-        update_u(0.5*epsilon*lambda);
-        /* reunitarize the gauge field */
-        reunitarize_ks();
-        /*TEMP - monitor action*/ //if(step%4==0)d_action_rhmc(multi_x,sumvec);
-      }	/* end loop over microcanonical steps */
+  case INT_OMELYAN:
+    /* do "steps" microcanonical steps (one "step" = one force evaluation)"  */
+    for(step=2; step <= steps; step+=2){
+      /* update U's and H's - see header comment */
+      update_u(0.5*epsilon*lambda);
+      iters += update_h_rhmc( epsilon, multi_x);
+      update_u(epsilon*(2.0-lambda));
+      iters += update_h_rhmc( epsilon, multi_x);
+      update_u(0.5*epsilon*lambda);
+      /* reunitarize the gauge field */
+      reunitarize_ks();
+      /*TEMP - monitor action*/ //if(step%4==0)d_action_rhmc(multi_x,sumvec);
+    }	/* end loop over microcanonical steps */
     break;
-    case INT_2G1F:
-        /* do "steps" microcanonical steps (one "step" = one force evaluation)"  */
-        for(step=2; step <= steps; step+=2){
-	    /* update U's and H's - see header comment */
-     	    update_u( epsilon*( (0.25-0.5*alpha) ) );
-	    update_h_gauge( 0.5*epsilon);
-     	    update_u( epsilon*( (0.5-beta)-(0.25-0.5*alpha) ) );
-	    iters += update_h_fermion( epsilon, multi_x);
-     	    update_u( epsilon*( (0.75+0.5*alpha)-(0.5-beta) ) );
-	    update_h_gauge( 0.5*epsilon);
+  case INT_2G1F:
+    /* do "steps" microcanonical steps (one "step" = one force evaluation)"  */
+    for(step=2; step <= steps; step+=2){
+      /* update U's and H's - see header comment */
+      update_u( epsilon*( (0.25-0.5*alpha) ) );
+      update_h_gauge( 0.5*epsilon);
+      update_u( epsilon*( (0.5-beta)-(0.25-0.5*alpha) ) );
+      iters += update_h_fermion( epsilon, multi_x);
+      update_u( epsilon*( (0.75+0.5*alpha)-(0.5-beta) ) );
+      update_h_gauge( 0.5*epsilon);
 
-     	    update_u( epsilon*( (1.25-0.5*alpha)-(0.75+0.5*alpha) ) );
-	    update_h_gauge( 0.5*epsilon);
-     	    update_u( epsilon*( (1.5+beta)-(1.25-0.5*alpha) ) );
-	    iters += update_h_fermion( epsilon, multi_x);
-     	    update_u( epsilon*( (1.75+0.5*alpha)-(1.5+beta) ) );
-	    update_h_gauge( 0.5*epsilon);
-     	    update_u( epsilon*( (2.0)-(1.75+0.5*alpha) ) );
+      update_u( epsilon*( (1.25-0.5*alpha)-(0.75+0.5*alpha) ) );
+      update_h_gauge( 0.5*epsilon);
+      update_u( epsilon*( (1.5+beta)-(1.25-0.5*alpha) ) );
+      iters += update_h_fermion( epsilon, multi_x);
+      update_u( epsilon*( (1.75+0.5*alpha)-(1.5+beta) ) );
+      update_h_gauge( 0.5*epsilon);
+      update_u( epsilon*( (2.0)-(1.75+0.5*alpha) ) );
 
-            /* reunitarize the gauge field */
-            reunitarize_ks();
-            /*TEMP - monitor action*/ //if(step%6==0)d_action_rhmc(multi_x,sumvec);
-        }	/* end loop over microcanonical steps */
+      /* reunitarize the gauge field */
+      reunitarize_ks();
+      /*TEMP - monitor action*/ //if(step%6==0)d_action_rhmc(multi_x,sumvec);
+    }	/* end loop over microcanonical steps */
     break;
-    case INT_3G1F:
-        /* do "steps" microcanonical steps (one "step" = one force evaluation)"  */
-        for(step=2; step <= steps; step+=2){
+  case INT_3G1F:
+    /* do "steps" microcanonical steps (one "step" = one force evaluation)"  */
+    for(step=2; step <= steps; step+=2){
 #ifdef MILC_GLOBAL_DEBUG
-            global_current_time_step = step-1;
-            node0_printf( "Current time step: %d\n", global_current_time_step );
+      global_current_time_step = step-1;
+      node0_printf( "Current time step: %d\n", global_current_time_step );
 #endif /* MILC_GLOBAL_DEBUG */
-	    /* update U's and H's - see header comment */
-     	    update_u( epsilon*( (1.0/6.0-alpha/3.0) ) );
-	    update_h_gauge( epsilon/3.0);
-     	    update_u( epsilon*( (0.5-beta)-(1.0/6.0-alpha/3.0) ) );
-	    iters += update_h_fermion( epsilon, multi_x);
-     	    update_u( epsilon*( (3.0/6.0+alpha/3.0)-(0.5-beta) ) );
-	    update_h_gauge( epsilon/3.0);
+      /* update U's and H's - see header comment */
+      update_u( epsilon*( (1.0/6.0-alpha/3.0) ) );
+      update_h_gauge( epsilon/3.0);
+      update_u( epsilon*( (0.5-beta)-(1.0/6.0-alpha/3.0) ) );
+      iters += update_h_fermion( epsilon, multi_x);
+      update_u( epsilon*( (3.0/6.0+alpha/3.0)-(0.5-beta) ) );
+      update_h_gauge( epsilon/3.0);
 
-     	    update_u( epsilon*( (5.0/6.0-alpha/3.0)-(3.0/6.0+alpha/3.0) ) );
-	    update_h_gauge( epsilon/3.0);
-     	    update_u( epsilon*( (7.0/6.0+alpha/3.0)-(5.0/6.0-alpha/3.0) ) );
-	    update_h_gauge( epsilon/3.0);
+      update_u( epsilon*( (5.0/6.0-alpha/3.0)-(3.0/6.0+alpha/3.0) ) );
+      update_h_gauge( epsilon/3.0);
+      update_u( epsilon*( (7.0/6.0+alpha/3.0)-(5.0/6.0-alpha/3.0) ) );
+      update_h_gauge( epsilon/3.0);
 
-#ifdef MILC_GLOBAL_DEBUG
-#ifdef HISQ_REUNITARIZATION_DEBUG
-            {
-            double max_delta_phase = 0.0;
-            double max_delta_norm = 0.0;
-            site *s;
-            int idir;
-            double delta_phase,delta_norm;
-            su3_matrix Wdiff;
-            double min_det_V, max_det_V;
-            double min_eigen,max_eigen,min_denom;
-            double Wm1unit; /* norm of (W^+W - I) */
-            double flag_detV=1;
-            FORALLSITES(i,s) {
-              for( idir=XUP;idir<=TUP;idir++ ) {
-                /* phase deviation */
-                delta_phase = fabs( lattice[i].phase_Y[idir] -
-                                    lattice[i].phase_Y_previous[idir] );
-                if( delta_phase > max_delta_phase ) max_delta_phase = delta_phase;
-                /* Wlink norm deviation */
-                sub_su3_matrix( &(lattice[i].Wlink[idir]),
-                                &(lattice[i].Wlink_previous[idir]), &Wdiff );
-                delta_norm = su3_norm_frob( &Wdiff );
-                if( delta_norm > max_delta_norm ) max_delta_norm = delta_norm;
-
-                if( 1==flag_detV ) {
-                  min_det_V = lattice[i].Vdet[idir];
-                  max_det_V = min_det_V;
-                  min_eigen = lattice[i].gmin[idir];
-                  max_eigen = lattice[i].gmax[idir];
-                  min_denom = lattice[i].denom[idir];
-                  Wm1unit = lattice[i].unitW1[idir];
-                  flag_detV = 0;
-                }
-                else {
-                  if( min_det_V > lattice[i].Vdet[idir] )
-                    min_det_V = lattice[i].Vdet[idir];
-                  if( max_det_V < lattice[i].Vdet[idir] )
-                    max_det_V = lattice[i].Vdet[idir];
-                  if( min_eigen > lattice[i].gmin[idir] )
-                    min_eigen = lattice[i].gmin[idir];
-                  if( max_eigen < lattice[i].gmax[idir] )
-                    max_eigen = lattice[i].gmax[idir];
-                  if( min_denom > lattice[i].denom[idir] )
-                    min_denom = lattice[i].denom[idir];
-                  if( Wm1unit < lattice[i].unitW1[idir] )
-                    Wm1unit = lattice[i].unitW1[idir];
-                }
-              }
-            }
-            g_doublemax( &max_delta_phase );
-            g_doublemax( &max_delta_norm );
-            min_det_V = -min_det_V;
-            g_doublemax( &min_det_V );
-            g_doublemax( &max_det_V );
-            min_det_V = -min_det_V;
-            min_eigen = -min_eigen;
-            g_doublemax( &min_eigen );
-            g_doublemax( &max_eigen );
-            min_eigen = -min_eigen;
-            min_denom = -min_denom;
-            g_doublemax( &min_denom );
-            min_denom = -min_denom;
-            node0_printf("PHASE_Y maximum jump: %28.14g\n", max_delta_phase );
-            node0_printf("NORM_W maximum jump: %28.14g\n", max_delta_norm );
-            node0_printf("DET_V minimum: %28.14g\n", min_det_V);
-            node0_printf("DET_V maximum: %28.14g\n", max_det_V);
-            node0_printf("(V^+V) eigenvalue minimum: %28.14g\n", min_eigen);
-            node0_printf("(V^+V) eigenvalue maximum: %28.14g\n", max_eigen);
-            node0_printf("denom=ws*(us*vs-ws)  minimum: %28.14g\n", min_denom);
-            node0_printf("Deviation from unitary |W^+W-1|  maximum: %28.14g\n", Wm1unit);
-            }
-#endif /* HISQ_REUNITARIZATION_DEBUG */
-            global_current_time_step = step;
-            node0_printf( "Current time step: %d\n", global_current_time_step );
-#endif /* MILC_GLOBAL_DEBUG */
-
-     	    update_u( epsilon*( (9.0/6.0-alpha/3.0)-(7.0/6.0+alpha/3.0) ) );
-	    update_h_gauge( epsilon/3.0);
-     	    update_u( epsilon*( (1.5+beta)-(9.0/6.0-alpha/3.0) ) );
-	    iters += update_h_fermion( epsilon, multi_x);
-     	    update_u( epsilon*( (11.0/6.0+alpha/3.0)-(1.5+beta) ) );
-	    update_h_gauge( epsilon/3.0);
-     	    update_u( epsilon*( (2.0)-(11.0/6.0+alpha/3.0) ) );
-
-            /* reunitarize the gauge field */
-            reunitarize_ks();
 #ifdef MILC_GLOBAL_DEBUG
 #ifdef HISQ_REUNITARIZATION_DEBUG
-            {
-            double max_delta_phase = 0.0;
-            double max_delta_norm = 0.0;
-            site *s;
-            int idir;
-            double delta_phase,delta_norm;
-            su3_matrix Wdiff;
-            double min_det_V, max_det_V;
-            double min_eigen,max_eigen,min_denom;
-            double Wm1unit; /* norm of (W^+W - I) */
-            double flag_detV=1;
-            FORALLSITES(i,s) {
-              for( idir=XUP;idir<=TUP;idir++ ) {
-                /* phase deviation */
-                delta_phase = fabs( lattice[i].phase_Y[idir] -
-                                    lattice[i].phase_Y_previous[idir] );
-                if( delta_phase > max_delta_phase ) max_delta_phase = delta_phase;
-                /* Wlink norm deviation */
-                sub_su3_matrix( &(lattice[i].Wlink[idir]),
-                                &(lattice[i].Wlink_previous[idir]), &Wdiff );
-                delta_norm = su3_norm_frob( &Wdiff );
-                if( delta_norm > max_delta_norm ) max_delta_norm = delta_norm;
+      {
+        double max_delta_phase = 0.0;
+        double max_delta_norm = 0.0;
+        site *s;
+        int idir;
+        double delta_phase,delta_norm;
+        su3_matrix Wdiff;
+        double min_det_V, max_det_V;
+        double min_eigen,max_eigen,min_denom;
+        double Wm1unit; /* norm of (W^+W - I) */
+        double flag_detV=1;
+        FORALLSITES(i,s) {
+          for( idir=XUP;idir<=TUP;idir++ ) {
+            /* phase deviation */
+            delta_phase = fabs( lattice[i].phase_Y[idir] -
+                                lattice[i].phase_Y_previous[idir] );
+            if( delta_phase > max_delta_phase ) max_delta_phase = delta_phase;
+            /* Wlink norm deviation */
+            sub_su3_matrix( &(lattice[i].Wlink[idir]),
+                            &(lattice[i].Wlink_previous[idir]), &Wdiff );
+            delta_norm = su3_norm_frob( &Wdiff );
+            if( delta_norm > max_delta_norm ) max_delta_norm = delta_norm;
 
-                if( 1==flag_detV ) {
-                  min_det_V = lattice[i].Vdet[idir];
-                  max_det_V = min_det_V;
-                  min_eigen = lattice[i].gmin[idir];
-                  max_eigen = lattice[i].gmax[idir];
-                  min_denom = lattice[i].denom[idir];
-                  Wm1unit = lattice[i].unitW1[idir];
-                  flag_detV = 0;
-                }
-                else {
-                  if( min_det_V > lattice[i].Vdet[idir] )
-                    min_det_V = lattice[i].Vdet[idir];
-                  if( max_det_V < lattice[i].Vdet[idir] )
-                    max_det_V = lattice[i].Vdet[idir];
-                  if( min_eigen > lattice[i].gmin[idir] )
-                    min_eigen = lattice[i].gmin[idir];
-                  if( max_eigen < lattice[i].gmax[idir] )
-                    max_eigen = lattice[i].gmax[idir];
-                  if( min_denom > lattice[i].denom[idir] )
-                    min_denom = lattice[i].denom[idir];
-                  if( Wm1unit < lattice[i].unitW1[idir] )
-                    Wm1unit = lattice[i].unitW1[idir];
-                }
-              }
+            if( 1==flag_detV ) {
+              min_det_V = lattice[i].Vdet[idir];
+              max_det_V = min_det_V;
+              min_eigen = lattice[i].gmin[idir];
+              max_eigen = lattice[i].gmax[idir];
+              min_denom = lattice[i].denom[idir];
+              Wm1unit = lattice[i].unitW1[idir];
+              flag_detV = 0;
             }
-            g_doublemax( &max_delta_phase );
-            g_doublemax( &max_delta_norm );
-            min_det_V = -min_det_V;
-            g_doublemax( &min_det_V );
-            g_doublemax( &max_det_V );
-            min_det_V = -min_det_V;
-            min_eigen = -min_eigen;
-            g_doublemax( &min_eigen );
-            g_doublemax( &max_eigen );
-            min_eigen = -min_eigen;
-            min_denom = -min_denom;
-            g_doublemax( &min_denom );
-            min_denom = -min_denom;
-            node0_printf("PHASE_Y maximum jump: %28.14g\n", max_delta_phase );
-            node0_printf("NORM_W maximum jump: %28.14g\n", max_delta_norm );
-            node0_printf("DET_V minimum: %28.14g\n", min_det_V);
-            node0_printf("DET_V maximum: %28.14g\n", max_det_V);
-            node0_printf("(V^+V) eigenvalue minimum: %28.14g\n", min_eigen);
-            node0_printf("(V^+V) eigenvalue maximum: %28.14g\n", max_eigen);
-            node0_printf("denom=ws*(us*vs-ws)  minimum: %28.14g\n", min_denom);
-            node0_printf("Deviation from unitary |W^+W-1|  maximum: %28.14g\n", Wm1unit);
+            else {
+              if( min_det_V > lattice[i].Vdet[idir] )
+                min_det_V = lattice[i].Vdet[idir];
+              if( max_det_V < lattice[i].Vdet[idir] )
+                max_det_V = lattice[i].Vdet[idir];
+              if( min_eigen > lattice[i].gmin[idir] )
+                min_eigen = lattice[i].gmin[idir];
+              if( max_eigen < lattice[i].gmax[idir] )
+                max_eigen = lattice[i].gmax[idir];
+              if( min_denom > lattice[i].denom[idir] )
+                min_denom = lattice[i].denom[idir];
+              if( Wm1unit < lattice[i].unitW1[idir] )
+                Wm1unit = lattice[i].unitW1[idir];
             }
+          }
+        }
+        g_doublemax( &max_delta_phase );
+        g_doublemax( &max_delta_norm );
+        min_det_V = -min_det_V;
+        g_doublemax( &min_det_V );
+        g_doublemax( &max_det_V );
+        min_det_V = -min_det_V;
+        min_eigen = -min_eigen;
+        g_doublemax( &min_eigen );
+        g_doublemax( &max_eigen );
+        min_eigen = -min_eigen;
+        min_denom = -min_denom;
+        g_doublemax( &min_denom );
+        min_denom = -min_denom;
+        node0_printf("PHASE_Y maximum jump: %28.14g\n", max_delta_phase );
+        node0_printf("NORM_W maximum jump: %28.14g\n", max_delta_norm );
+        node0_printf("DET_V minimum: %28.14g\n", min_det_V);
+        node0_printf("DET_V maximum: %28.14g\n", max_det_V);
+        node0_printf("(V^+V) eigenvalue minimum: %28.14g\n", min_eigen);
+        node0_printf("(V^+V) eigenvalue maximum: %28.14g\n", max_eigen);
+        node0_printf("denom=ws*(us*vs-ws)  minimum: %28.14g\n", min_denom);
+        node0_printf("Deviation from unitary |W^+W-1|  maximum: %28.14g\n", Wm1unit);
+      }
 #endif /* HISQ_REUNITARIZATION_DEBUG */
-            /*TEMP - monitor action*/ tempaction = d_action_rhmc(multi_x,sumvec);
-            /*TEMP - monitor action*/ node0_printf("DELTA_SO_FAR %e\n",tempaction-startaction);
+      global_current_time_step = step;
+      node0_printf( "Current time step: %d\n", global_current_time_step );
 #endif /* MILC_GLOBAL_DEBUG */
-        }	/* end loop over microcanonical steps */
+
+      update_u( epsilon*( (9.0/6.0-alpha/3.0)-(7.0/6.0+alpha/3.0) ) );
+      update_h_gauge( epsilon/3.0);
+      update_u( epsilon*( (1.5+beta)-(9.0/6.0-alpha/3.0) ) );
+      iters += update_h_fermion( epsilon, multi_x);
+      update_u( epsilon*( (11.0/6.0+alpha/3.0)-(1.5+beta) ) );
+      update_h_gauge( epsilon/3.0);
+      update_u( epsilon*( (2.0)-(11.0/6.0+alpha/3.0) ) );
+
+      /* reunitarize the gauge field */
+      reunitarize_ks();
+#ifdef MILC_GLOBAL_DEBUG
+#ifdef HISQ_REUNITARIZATION_DEBUG
+      {
+        double max_delta_phase = 0.0;
+        double max_delta_norm = 0.0;
+        site *s;
+        int idir;
+        double delta_phase,delta_norm;
+        su3_matrix Wdiff;
+        double min_det_V, max_det_V;
+        double min_eigen,max_eigen,min_denom;
+        double Wm1unit; /* norm of (W^+W - I) */
+        double flag_detV=1;
+        FORALLSITES(i,s) {
+          for( idir=XUP;idir<=TUP;idir++ ) {
+            /* phase deviation */
+            delta_phase = fabs( lattice[i].phase_Y[idir] -
+                                lattice[i].phase_Y_previous[idir] );
+            if( delta_phase > max_delta_phase ) max_delta_phase = delta_phase;
+            /* Wlink norm deviation */
+            sub_su3_matrix( &(lattice[i].Wlink[idir]),
+                            &(lattice[i].Wlink_previous[idir]), &Wdiff );
+            delta_norm = su3_norm_frob( &Wdiff );
+            if( delta_norm > max_delta_norm ) max_delta_norm = delta_norm;
+
+            if( 1==flag_detV ) {
+              min_det_V = lattice[i].Vdet[idir];
+              max_det_V = min_det_V;
+              min_eigen = lattice[i].gmin[idir];
+              max_eigen = lattice[i].gmax[idir];
+              min_denom = lattice[i].denom[idir];
+              Wm1unit = lattice[i].unitW1[idir];
+              flag_detV = 0;
+            }
+            else {
+              if( min_det_V > lattice[i].Vdet[idir] )
+                min_det_V = lattice[i].Vdet[idir];
+              if( max_det_V < lattice[i].Vdet[idir] )
+                max_det_V = lattice[i].Vdet[idir];
+              if( min_eigen > lattice[i].gmin[idir] )
+                min_eigen = lattice[i].gmin[idir];
+              if( max_eigen < lattice[i].gmax[idir] )
+                max_eigen = lattice[i].gmax[idir];
+              if( min_denom > lattice[i].denom[idir] )
+                min_denom = lattice[i].denom[idir];
+              if( Wm1unit < lattice[i].unitW1[idir] )
+                Wm1unit = lattice[i].unitW1[idir];
+            }
+          }
+        }
+        g_doublemax( &max_delta_phase );
+        g_doublemax( &max_delta_norm );
+        min_det_V = -min_det_V;
+        g_doublemax( &min_det_V );
+        g_doublemax( &max_det_V );
+        min_det_V = -min_det_V;
+        min_eigen = -min_eigen;
+        g_doublemax( &min_eigen );
+        g_doublemax( &max_eigen );
+        min_eigen = -min_eigen;
+        min_denom = -min_denom;
+        g_doublemax( &min_denom );
+        min_denom = -min_denom;
+        node0_printf("PHASE_Y maximum jump: %28.14g\n", max_delta_phase );
+        node0_printf("NORM_W maximum jump: %28.14g\n", max_delta_norm );
+        node0_printf("DET_V minimum: %28.14g\n", min_det_V);
+        node0_printf("DET_V maximum: %28.14g\n", max_det_V);
+        node0_printf("(V^+V) eigenvalue minimum: %28.14g\n", min_eigen);
+        node0_printf("(V^+V) eigenvalue maximum: %28.14g\n", max_eigen);
+        node0_printf("denom=ws*(us*vs-ws)  minimum: %28.14g\n", min_denom);
+        node0_printf("Deviation from unitary |W^+W-1|  maximum: %28.14g\n", Wm1unit);
+      }
+#endif /* HISQ_REUNITARIZATION_DEBUG */
+      /*TEMP - monitor action*/ tempaction = d_action_rhmc(multi_x,sumvec);
+      /*TEMP - monitor action*/ node0_printf("DELTA_SO_FAR %e\n",tempaction-startaction);
+#endif /* MILC_GLOBAL_DEBUG */
+    }	/* end loop over microcanonical steps */
     break;
 
-    case INT_PQPQP:
-        node0_printf("RUN PQPQP integrator\n");
-        Real lam          = outer_lambda;
-        Real one_mns_2lam = 1.0 -2.0*outer_lambda;
-        for(step=1; step <= steps; step+=1){
-            /*
-            PQPQP = P Q_inner P Q_inner P
-            P does both the Fermion and Gauge force
-            Q_inner will do one of 
-              Q, QPQ, QPQPQ
-            where these P only update the gauge force
+  case INT_PQPQP:
+    node0_printf("RUN PQPQP integrator\n");
+    Real lam          = outer_lambda;
+    Real one_mns_2lam = 1.0 -2.0*outer_lambda;
+    for(step=1; step <= steps; step+=1){
+      /*
+        PQPQP = P Q_inner P Q_inner P
+        P does both the Fermion and Gauge force
+        Q_inner will do one of 
+        Q, QPQ, QPQPQ
+        where these P only update the gauge force
 
-            One "step" brings the MD forward by epsilon
+        One "step" brings the MD forward by epsilon
 
-            NOTE: since we are chaining these together with a ferm as the first and last 
-            step, and update_h_ferm only updates the momentum, we can double the length 
-            of the last step and skip the first, except the first and last step 
-            */
+        NOTE: since we are chaining these together with a ferm as the first and last 
+        step, and update_h_ferm only updates the momentum, we can double the length 
+        of the last step and skip the first, except the first and last step 
+      */
 	  
 	  if(q_inner == 0){
-                if(step == 1){
-                    iters += update_h_rhmc(         lam * epsilon, multi_x);
-                }
-                update_u                  (         0.5 * epsilon         );
-                iters += update_h_rhmc    (one_mns_2lam * epsilon, multi_x);
-                update_u                  (         0.5 * epsilon         );
-                if(step == steps){
-                    iters += update_h_rhmc(         lam * epsilon, multi_x);
-                } else {
-                    iters += update_h_rhmc(   2.0 * lam * epsilon, multi_x);
-                }
+        if(step == 1){
+          iters += update_h_rhmc(         lam * epsilon, multi_x);
+        }
+        update_u                (         0.5 * epsilon         );
+        iters += update_h_rhmc  (one_mns_2lam * epsilon, multi_x);
+        update_u                (         0.5 * epsilon         );
+        if(step == steps){
+          iters += update_h_rhmc(         lam * epsilon, multi_x);
+        } else {
+          iters += update_h_rhmc(   2.0 * lam * epsilon, multi_x);
+        }
 	  } else if (q_inner == 1 || q_inner == 2) {
-	      if(step == 1){
-                    iters += update_h_fermion(         lam * epsilon, multi_x);
-                }
-                update_inner_pqpqp           (         0.5 * epsilon, inner_steps, inner_lambda, q_inner);
-                iters += update_h_fermion    (one_mns_2lam * epsilon, multi_x);
-                update_inner_pqpqp           (         0.5 * epsilon, inner_steps, inner_lambda, q_inner);
-                if(step == steps){
-                    iters += update_h_fermion(         lam * epsilon, multi_x);
-                } else {
-                    iters += update_h_fermion(   2.0 * lam * epsilon, multi_x);
-                }
+        if(step == 1){
+          iters += update_h_fermion(         lam * epsilon, multi_x);
+        }
+        update_inner_pqpqp         (         0.5 * epsilon, inner_steps, inner_lambda, q_inner);
+        iters += update_h_fermion  (one_mns_2lam * epsilon, multi_x);
+        update_inner_pqpqp         (         0.5 * epsilon, inner_steps, inner_lambda, q_inner);
+        if(step == steps){
+          iters += update_h_fermion(         lam * epsilon, multi_x);
+        } else {
+          iters += update_h_fermion(   2.0 * lam * epsilon, multi_x);
+        }
 	  } else {
 	    node0_printf("The q_inner must be 0 (Q), 1 (PQP) or 2 (PQPQP), q = %d\n", q_inner);
 	    terminate(1);
@@ -679,7 +679,7 @@ int update() {
 
 	  /* reunitarize the gauge field */
 	  reunitarize_ks();
-        } /* end loop over microcanonical steps */        
+    } /* end loop over microcanonical steps */        
     break;
 
   case INT_FGI_PQPQP:
@@ -714,19 +714,19 @@ int update() {
 
       // Initial step
       if(step == 1) {
-	if (q_inner != 0) iters += update_h_fermion(lambda_dt, multi_x);
-	else              iters += update_h_rhmc(lambda_dt, multi_x);
+        if (q_inner != 0) iters += update_h_fermion(lambda_dt, multi_x);
+        else              iters += update_h_rhmc(lambda_dt, multi_x);
       }
       
       // Optional multiscale step
       if(q_inner == 3) update_inner_fgi(dtauby2, inner_steps);
       else if(q_inner == 2 ||
-	      q_inner == 1 ||
-	      q_inner == 0) {
-	update_inner_pqpqp(dtauby2, inner_steps, inner_lambda, q_inner);
+              q_inner == 1 ||
+              q_inner == 0) {
+        update_inner_pqpqp(dtauby2, inner_steps, inner_lambda, q_inner);
       } else {
-	node0_printf("The q_inner must be 0 (Q), 1 (PQP) or 2 (PQPQP), q = %d\n", q_inner);
-	terminate(1);
+        node0_printf("The q_inner must be 0 (Q), 1 (PQP) or 2 (PQPQP), q = %d\n", q_inner);
+        terminate(1);
       }
       
       // Apply Force Gradient
@@ -735,22 +735,22 @@ int update() {
       // Optional multiscale step
       if(q_inner == 3) update_inner_fgi(dtauby2, inner_steps);
       else if(q_inner == 2 ||
-	      q_inner == 1 ||
-	      q_inner == 0) {
-	update_inner_pqpqp(dtauby2, inner_steps, inner_lambda, q_inner);
+              q_inner == 1 ||
+              q_inner == 0) {
+        update_inner_pqpqp(dtauby2, inner_steps, inner_lambda, q_inner);
       } else {
-	node0_printf("The q_inner must be 0 (Q), 1 (PQP) or 2 (PQPQP), q = %d\n", q_inner);
-	terminate(1);
+        node0_printf("The q_inner must be 0 (Q), 1 (PQP) or 2 (PQPQP), q = %d\n", q_inner);
+        terminate(1);
       }
 
       // Final step
       if(step == steps) {
-	if (q_inner != 0) iters += update_h_fermion(lambda_dt, multi_x);
-	else              iters += update_h_rhmc(lambda_dt, multi_x);
+        if (q_inner != 0) iters += update_h_fermion(lambda_dt, multi_x);
+        else              iters += update_h_rhmc(lambda_dt, multi_x);
       }
       else {
-	if (q_inner != 0) iters += update_h_fermion(two_lambda_dt, multi_x);
-	else              iters += update_h_rhmc(two_lambda_dt, multi_x);
+        if (q_inner != 0) iters += update_h_fermion(two_lambda_dt, multi_x);
+        else              iters += update_h_rhmc(two_lambda_dt, multi_x);
       }
       
       /* reunitarize the gauge field */
@@ -759,177 +759,177 @@ int update() {
     break;
     
     
-    case INT_5G1F:
-        /* do "steps" microcanonical steps (one "step" = one force evaluation)"  */
-        for(step=2; step <= steps; step+=2){
-	    /* update U's and H's - see header comment */
-        /* do 2 gauge updates */
-     	    update_u( epsilon*( (1.0/10.0-alpha/5.0) ) );
-	    update_h_gauge( epsilon/5.0);
-            update_u( epsilon*( (3.0/10.0+alpha/5.0)-(1.0/10.0-alpha/5.0) ) );
-	    update_h_gauge( epsilon/5.0);
-        /* do 1 ferm update */
-     	    update_u( epsilon*( (0.5-beta)-(3.0/10.0+alpha/5.0) ) );
-	    iters += update_h_fermion( epsilon, multi_x);
-        /* do 3 gauge updates */
-     	    update_u( epsilon*( (5.0/10.0-alpha/5.0)-(0.5-beta) ) );
-	    update_h_gauge( epsilon/5.0);
-     	    update_u( epsilon*( (7.0/10.0+alpha/5.0)-(5.0/10.0-alpha/5.0) ) );
-	    update_h_gauge( epsilon/5.0);
-     	    update_u( epsilon*( (9.0/10.0-alpha/5.0)-(7.0/10.0+alpha/5.0) ) );
-	    update_h_gauge( epsilon/5.0);
-        /* next step */
-        /* do 3 gauge updates */
-     	    update_u( epsilon*( (11.0/10.0+alpha/5.0)-(9.0/10.0-alpha/5.0) ) );
-	    update_h_gauge( epsilon/5.0);
-     	    update_u( epsilon*( (13.0/10.0-alpha/5.0)-(11.0/10.0+alpha/5.0) ) );
-	    update_h_gauge( epsilon/5.0);
-     	    update_u( epsilon*( (15.0/10.0+alpha/5.0)-(13.0/10.0-alpha/5.0) ) );
-	    update_h_gauge( epsilon/5.0);
-        /* do 1 ferm update */
-     	    update_u( epsilon*( (1.5+beta)-(15.0/10.0+alpha/5.0) ) );
-	    iters += update_h_fermion( epsilon, multi_x);
-        /* do 2 gauge updates */
-     	    update_u( epsilon*( (17.0/10.0-alpha/5.0)-(1.5+beta) ) );
-	    update_h_gauge( epsilon/5.0);
-     	    update_u( epsilon*( (19.0/10.0+alpha/5.0)-(17.0/10.0-alpha/5.0) ) );
-	    update_h_gauge( epsilon/5.0);
-        /* finish */
-     	    update_u( epsilon*( (2.0)-(19.0/10.0+alpha/5.0) ) );
-        /* reunitarize the gauge field */
-            reunitarize_ks();
-        }
+  case INT_5G1F:
+    /* do "steps" microcanonical steps (one "step" = one force evaluation)"  */
+    for(step=2; step <= steps; step+=2){
+      /* update U's and H's - see header comment */
+      /* do 2 gauge updates */
+      update_u( epsilon*( (1.0/10.0-alpha/5.0) ) );
+      update_h_gauge( epsilon/5.0);
+      update_u( epsilon*( (3.0/10.0+alpha/5.0)-(1.0/10.0-alpha/5.0) ) );
+      update_h_gauge( epsilon/5.0);
+      /* do 1 ferm update */
+      update_u( epsilon*( (0.5-beta)-(3.0/10.0+alpha/5.0) ) );
+      iters += update_h_fermion( epsilon, multi_x);
+      /* do 3 gauge updates */
+      update_u( epsilon*( (5.0/10.0-alpha/5.0)-(0.5-beta) ) );
+      update_h_gauge( epsilon/5.0);
+      update_u( epsilon*( (7.0/10.0+alpha/5.0)-(5.0/10.0-alpha/5.0) ) );
+      update_h_gauge( epsilon/5.0);
+      update_u( epsilon*( (9.0/10.0-alpha/5.0)-(7.0/10.0+alpha/5.0) ) );
+      update_h_gauge( epsilon/5.0);
+      /* next step */
+      /* do 3 gauge updates */
+      update_u( epsilon*( (11.0/10.0+alpha/5.0)-(9.0/10.0-alpha/5.0) ) );
+      update_h_gauge( epsilon/5.0);
+      update_u( epsilon*( (13.0/10.0-alpha/5.0)-(11.0/10.0+alpha/5.0) ) );
+      update_h_gauge( epsilon/5.0);
+      update_u( epsilon*( (15.0/10.0+alpha/5.0)-(13.0/10.0-alpha/5.0) ) );
+      update_h_gauge( epsilon/5.0);
+      /* do 1 ferm update */
+      update_u( epsilon*( (1.5+beta)-(15.0/10.0+alpha/5.0) ) );
+      iters += update_h_fermion( epsilon, multi_x);
+      /* do 2 gauge updates */
+      update_u( epsilon*( (17.0/10.0-alpha/5.0)-(1.5+beta) ) );
+      update_h_gauge( epsilon/5.0);
+      update_u( epsilon*( (19.0/10.0+alpha/5.0)-(17.0/10.0-alpha/5.0) ) );
+      update_h_gauge( epsilon/5.0);
+      /* finish */
+      update_u( epsilon*( (2.0)-(19.0/10.0+alpha/5.0) ) );
+      /* reunitarize the gauge field */
+      reunitarize_ks();
+    }
     break;
-    case INT_6G1F:
-        /* do "steps" microcanonical steps (one "step" = one force evaluation)"  */
-        for(step=2; step <= steps; step+=2){
-	    /* update U's and H's - see header comment */
-        /* do 3 gauge updates */
-     	    update_u( epsilon*( (1.0/12.0-alpha/6.0) ) );
-	    update_h_gauge( epsilon/6.0);
-            update_u( epsilon*( (3.0/12.0+alpha/6.0)-(1.0/12.0-alpha/6.0) ) );
-	    update_h_gauge( epsilon/6.0);
-     	    update_u( epsilon*( (5.0/12.0-alpha/6.0)-(3.0/12.0+alpha/6.0) ) );
-	    update_h_gauge( epsilon/6.0);
-        /* do 1 ferm update */
-     	    update_u( epsilon*( (0.5-beta)-(5.0/12.0-alpha/6.0) ) );
-	    iters += update_h_fermion( epsilon, multi_x);
-        /* do 3 gauge updates */
-     	    update_u( epsilon*( (7.0/12.0+alpha/6.0)-(0.5-beta) ) );
-	    update_h_gauge( epsilon/6.0);
-     	    update_u( epsilon*( (9.0/12.0-alpha/6.0)-(7.0/12.0+alpha/6.0) ) );
-	    update_h_gauge( epsilon/6.0);
-     	    update_u( epsilon*( (11.0/12.0+alpha/6.0)-(9.0/12.0-alpha/6.0) ) );
-	    update_h_gauge( epsilon/6.0);
-        /* next step */
-        /* do 3 gauge updates */
-     	    update_u( epsilon*( (13.0/12.0-alpha/6.0)-(11.0/12.0+alpha/6.0) ) );
-	    update_h_gauge( epsilon/6.0);
-     	    update_u( epsilon*( (15.0/12.0+alpha/6.0)-(13.0/12.0-alpha/6.0) ) );
-	    update_h_gauge( epsilon/6.0);
-     	    update_u( epsilon*( (17.0/12.0-alpha/6.0)-(15.0/12.0+alpha/6.0) ) );
-	    update_h_gauge( epsilon/6.0);
-        /* do 1 ferm update */
-     	    update_u( epsilon*( (1.5+beta)-(17.0/12.0-alpha/6.0) ) );
-	    iters += update_h_fermion( epsilon, multi_x);
-        /* do 3 gauge updates */
-     	    update_u( epsilon*( (19.0/12.0+alpha/6.0)-(1.5+beta) ) );
-	    update_h_gauge( epsilon/6.0);
-     	    update_u( epsilon*( (21.0/12.0-alpha/6.0)-(19.0/12.0+alpha/6.0) ) );
-	    update_h_gauge( epsilon/6.0);
-     	    update_u( epsilon*( (23.0/12.0+alpha/6.0)-(21.0/12.0-alpha/6.0) ) );
-	    update_h_gauge( epsilon/6.0);
-        /* finish */
-     	    update_u( epsilon*( (2.0)-(23.0/12.0+alpha/6.0) ) );
-        /* reunitarize the gauge field */
-            reunitarize_ks();
-        }
+  case INT_6G1F:
+    /* do "steps" microcanonical steps (one "step" = one force evaluation)"  */
+    for(step=2; step <= steps; step+=2){
+      /* update U's and H's - see header comment */
+      /* do 3 gauge updates */
+      update_u( epsilon*( (1.0/12.0-alpha/6.0) ) );
+      update_h_gauge( epsilon/6.0);
+      update_u( epsilon*( (3.0/12.0+alpha/6.0)-(1.0/12.0-alpha/6.0) ) );
+      update_h_gauge( epsilon/6.0);
+      update_u( epsilon*( (5.0/12.0-alpha/6.0)-(3.0/12.0+alpha/6.0) ) );
+      update_h_gauge( epsilon/6.0);
+      /* do 1 ferm update */
+      update_u( epsilon*( (0.5-beta)-(5.0/12.0-alpha/6.0) ) );
+      iters += update_h_fermion( epsilon, multi_x);
+      /* do 3 gauge updates */
+      update_u( epsilon*( (7.0/12.0+alpha/6.0)-(0.5-beta) ) );
+      update_h_gauge( epsilon/6.0);
+      update_u( epsilon*( (9.0/12.0-alpha/6.0)-(7.0/12.0+alpha/6.0) ) );
+      update_h_gauge( epsilon/6.0);
+      update_u( epsilon*( (11.0/12.0+alpha/6.0)-(9.0/12.0-alpha/6.0) ) );
+      update_h_gauge( epsilon/6.0);
+      /* next step */
+      /* do 3 gauge updates */
+      update_u( epsilon*( (13.0/12.0-alpha/6.0)-(11.0/12.0+alpha/6.0) ) );
+      update_h_gauge( epsilon/6.0);
+      update_u( epsilon*( (15.0/12.0+alpha/6.0)-(13.0/12.0-alpha/6.0) ) );
+      update_h_gauge( epsilon/6.0);
+      update_u( epsilon*( (17.0/12.0-alpha/6.0)-(15.0/12.0+alpha/6.0) ) );
+      update_h_gauge( epsilon/6.0);
+      /* do 1 ferm update */
+      update_u( epsilon*( (1.5+beta)-(17.0/12.0-alpha/6.0) ) );
+      iters += update_h_fermion( epsilon, multi_x);
+      /* do 3 gauge updates */
+      update_u( epsilon*( (19.0/12.0+alpha/6.0)-(1.5+beta) ) );
+      update_h_gauge( epsilon/6.0);
+      update_u( epsilon*( (21.0/12.0-alpha/6.0)-(19.0/12.0+alpha/6.0) ) );
+      update_h_gauge( epsilon/6.0);
+      update_u( epsilon*( (23.0/12.0+alpha/6.0)-(21.0/12.0-alpha/6.0) ) );
+      update_h_gauge( epsilon/6.0);
+      /* finish */
+      update_u( epsilon*( (2.0)-(23.0/12.0+alpha/6.0) ) );
+      /* reunitarize the gauge field */
+      reunitarize_ks();
+    }
     break;
-    case INT_2EPS_3TO1:
+  case INT_2EPS_3TO1:
 #if ( FERM_ACTION == HISQ || FERM_ACTION == HYPISQ )
-      printf("update(%d): INT_2EPS_3TO1 is not supported for HISQ or HYPISQ\n",
-	     this_node);
-      terminate(1);
+    printf("update(%d): INT_2EPS_3TO1 is not supported for HISQ or HYPISQ\n",
+           this_node);
+    terminate(1);
 #endif
-        /* do "steps" microcanonical steps (one "step" = one force evaluation)"  */
-        for(step=6; step <= steps; step+=6){
-	    /* update U's and H's - first Omelyan step */
-	    update_u(0.5*epsilon*lambda);
-	    imp_gauge_force_ks(epsilon,F_OFFSET(mom));
-            eo_fermion_force_rhmc( epsilon,  &rparam[1].MD,
-				   multi_x, F_OFFSET(phi[1]), rsqmin_md[1], 
-				   niter_md[1], prec_md[1], prec_ff,
-				   fn_links );
-     	    update_u(epsilon*( 1.0 + 0.5*(1-lambda) )); // to time = (3/2)*epsilon
-            eo_fermion_force_rhmc( 3.0*epsilon,  &rparam[0].MD,
-				   multi_x, F_OFFSET(phi[0]), rsqmin_md[0], 
-				   niter_md[0], prec_md[0], prec_ff,
-				   fn_links );
+    /* do "steps" microcanonical steps (one "step" = one force evaluation)"  */
+    for(step=6; step <= steps; step+=6){
+      /* update U's and H's - first Omelyan step */
+      update_u(0.5*epsilon*lambda);
+      imp_gauge_force_ks(epsilon,F_OFFSET(mom));
+      eo_fermion_force_rhmc( epsilon,  &rparam[1].MD,
+                             multi_x, F_OFFSET(phi[1]), rsqmin_md[1], 
+                             niter_md[1], prec_md[1], prec_ff,
+                             fn_links );
+      update_u(epsilon*( 1.0 + 0.5*(1-lambda) )); // to time = (3/2)*epsilon
+      eo_fermion_force_rhmc( 3.0*epsilon,  &rparam[0].MD,
+                             multi_x, F_OFFSET(phi[0]), rsqmin_md[0], 
+                             niter_md[0], prec_md[0], prec_ff,
+                             fn_links );
 
-     	    update_u(epsilon*( 0.5*(1.0-lambda) ));
+      update_u(epsilon*( 0.5*(1.0-lambda) ));
 
-	    imp_gauge_force_ks(epsilon,F_OFFSET(mom));
-            eo_fermion_force_rhmc( epsilon,  &rparam[1].MD,
-				   multi_x, F_OFFSET(phi[1]), rsqmin_md[1], 
-				   niter_md[1], prec_md[1], prec_ff,
-				   fn_links );
+      imp_gauge_force_ks(epsilon,F_OFFSET(mom));
+      eo_fermion_force_rhmc( epsilon,  &rparam[1].MD,
+                             multi_x, F_OFFSET(phi[1]), rsqmin_md[1], 
+                             niter_md[1], prec_md[1], prec_ff,
+                             fn_links );
 
-    	    update_u(0.5*epsilon*lambda);
+      update_u(0.5*epsilon*lambda);
 
-	    /* update U's and H's - second Omelyan step */
-     	    update_u(0.5*epsilon*lambda);
+      /* update U's and H's - second Omelyan step */
+      update_u(0.5*epsilon*lambda);
 
-	    imp_gauge_force_ks(epsilon,F_OFFSET(mom));
-            eo_fermion_force_rhmc( epsilon,  &rparam[1].MD,
-				   multi_x, F_OFFSET(phi[1]), rsqmin_md[1], 
-				   niter_md[1], prec_md[1], prec_ff,
-				   fn_links );
+      imp_gauge_force_ks(epsilon,F_OFFSET(mom));
+      eo_fermion_force_rhmc( epsilon,  &rparam[1].MD,
+                             multi_x, F_OFFSET(phi[1]), rsqmin_md[1], 
+                             niter_md[1], prec_md[1], prec_ff,
+                             fn_links );
 
-     	    update_u(epsilon*(2.0-lambda));
+      update_u(epsilon*(2.0-lambda));
 
-	    imp_gauge_force_ks(epsilon,F_OFFSET(mom));
-            eo_fermion_force_rhmc( epsilon,  &rparam[1].MD,
-				   multi_x, F_OFFSET(phi[1]), rsqmin_md[1], 
-				   niter_md[1], prec_md[1], prec_ff,
-				   fn_links );
+      imp_gauge_force_ks(epsilon,F_OFFSET(mom));
+      eo_fermion_force_rhmc( epsilon,  &rparam[1].MD,
+                             multi_x, F_OFFSET(phi[1]), rsqmin_md[1], 
+                             niter_md[1], prec_md[1], prec_ff,
+                             fn_links );
 
-    	    update_u(0.5*epsilon*lambda);
+      update_u(0.5*epsilon*lambda);
 
-	    /* update U's and H's - third Omelyan step */
-     	    update_u(0.5*epsilon*lambda);
+      /* update U's and H's - third Omelyan step */
+      update_u(0.5*epsilon*lambda);
 
-	    imp_gauge_force_ks(epsilon,F_OFFSET(mom));
-            eo_fermion_force_rhmc( epsilon,  &rparam[1].MD,
-				   multi_x, F_OFFSET(phi[1]), rsqmin_md[1], 
-				   niter_md[1], prec_md[1], prec_ff,
-				   fn_links );
+      imp_gauge_force_ks(epsilon,F_OFFSET(mom));
+      eo_fermion_force_rhmc( epsilon,  &rparam[1].MD,
+                             multi_x, F_OFFSET(phi[1]), rsqmin_md[1], 
+                             niter_md[1], prec_md[1], prec_ff,
+                             fn_links );
 
-     	    update_u(epsilon*(  0.5*(1.0-lambda) )); // to time 2*epsilon + epsilon/2
+      update_u(epsilon*(  0.5*(1.0-lambda) )); // to time 2*epsilon + epsilon/2
 
-            eo_fermion_force_rhmc( 3.0*epsilon,  &rparam[0].MD,
-				   multi_x, F_OFFSET(phi[0]), rsqmin_md[0], 
-				   niter_md[0], prec_md[0], prec_ff,
-				   fn_links );
+      eo_fermion_force_rhmc( 3.0*epsilon,  &rparam[0].MD,
+                             multi_x, F_OFFSET(phi[0]), rsqmin_md[0], 
+                             niter_md[0], prec_md[0], prec_ff,
+                             fn_links );
 
-     	    update_u(epsilon*( 1.0 + 0.5*(1.0-lambda) ));
+      update_u(epsilon*( 1.0 + 0.5*(1.0-lambda) ));
 
-	    imp_gauge_force_ks(epsilon,F_OFFSET(mom));
-            eo_fermion_force_rhmc( epsilon,  &rparam[1].MD,
-				   multi_x, F_OFFSET(phi[1]), rsqmin_md[1], 
-				   niter_md[1], prec_md[1], prec_ff,
-				   fn_links );
+      imp_gauge_force_ks(epsilon,F_OFFSET(mom));
+      eo_fermion_force_rhmc( epsilon,  &rparam[1].MD,
+                             multi_x, F_OFFSET(phi[1]), rsqmin_md[1], 
+                             niter_md[1], prec_md[1], prec_ff,
+                             fn_links );
 
-    	    update_u(0.5*epsilon*lambda);
+      update_u(0.5*epsilon*lambda);
 
-            /* reunitarize the gauge field */
-	    reunitarize_ks();
-            /*TEMP - monitor action*/ //if(step%6==0)d_action_rhmc(multi_x,sumvec);
+      /* reunitarize the gauge field */
+      reunitarize_ks();
+      /*TEMP - monitor action*/ //if(step%6==0)d_action_rhmc(multi_x,sumvec);
 
-        }	/* end loop over microcanonical steps */
+    }	/* end loop over microcanonical steps */
     break;
-    default:
-      node0_printf("No integration algorithm, or unknown one\n");
-      terminate(1);
+  default:
+    node0_printf("No integration algorithm, or unknown one\n");
+    terminate(1);
     break;
   }
 

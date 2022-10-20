@@ -6,7 +6,9 @@
  */
 
 #include "ks_imp_includes.h"    /* definitions files and prototypes */
-
+#ifdef HAVE_QUDA
+#include "../include/generic_quda.h"
+#endif
 
 // These inner QPQPQ, PQPQP and FGI functions only update the gauge fields
 // They are for doing multi-steps for the gauge field per step for the fermions
@@ -197,6 +199,7 @@ int force_gradient(Real eps_t, Real eps_ttt, su3_vector **multi_x, int action){
       terminate(1);
     }
     
+#ifndef HAVE_QUDA // CPU field copies
     // allocate memory for gauge field copy
     su3_matrix *linkcopyXUP, *linkcopyYUP, *linkcopyZUP, *linkcopyTUP;
     linkcopyXUP = malloc(sizeof(su3_matrix)*sites_on_node);
@@ -213,6 +216,12 @@ int force_gradient(Real eps_t, Real eps_ttt, su3_vector **multi_x, int action){
     //Make a copy of the momentum field and then zero it out
     copy_momentum(momentumcopy);
     zero_momentum();
+#else // have GPU copy the gauge and momentum fields
+    // make a copy and zero the momentum on GPU
+    qudaMomZero();
+    // make a copy of the gauge field on GPU
+    qudaGaugeCopy();
+#endif
 
     // ultimately, we shift by p * dt * (1-2lam)
     // so, the dt**3 shift, since it is added to p, should be normalized by
@@ -232,7 +241,11 @@ int force_gradient(Real eps_t, Real eps_ttt, su3_vector **multi_x, int action){
     update_u( 1.0 );
 
     // restore the momentum so we can add our kick to it
+#ifndef HAVE_QUDA
     restore_momentum(momentumcopy);
+#else
+    qudaMomRestore();
+#endif
 
     // add our kick to the momentum
     // eps_t = dt * (1-2lam)
@@ -250,6 +263,7 @@ int force_gradient(Real eps_t, Real eps_ttt, su3_vector **multi_x, int action){
     }
 
     // restore the gauge field
+#ifndef HAVE_QUDA
     restore_gauge_field(linkcopyXUP, linkcopyYUP, linkcopyZUP, linkcopyTUP);
 
     // free the memory
@@ -258,6 +272,10 @@ int force_gradient(Real eps_t, Real eps_ttt, su3_vector **multi_x, int action){
     free(linkcopyZUP);
     free(linkcopyTUP);
     free(momentumcopy);
+#else
+    qudaGaugeRestore();
+#endif
+
     
     return iters;
 }
