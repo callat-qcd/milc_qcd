@@ -218,8 +218,10 @@ int force_gradient(Real eps_t, Real eps_ttt, su3_vector **multi_x, int action){
     zero_momentum();
 #else // have GPU copy the gauge and momentum fields
     // make a copy and zero the momentum on GPU
+    node0_printf("zero device momentum after making a copy\n");
     qudaMomZero();
     // make a copy of the gauge field on GPU
+    node0_printf("make a copy of gauge field on device\n");
     qudaGaugeCopy();
 #endif
 
@@ -242,6 +244,7 @@ int force_gradient(Real eps_t, Real eps_ttt, su3_vector **multi_x, int action){
 
     // restore the momentum so we can add our kick to it
 #ifndef HAVE_QUDA
+    node0_printf("restore device momentum\n");
     restore_momentum(momentumcopy);
 #else
     qudaMomRestore();
@@ -273,6 +276,7 @@ int force_gradient(Real eps_t, Real eps_ttt, su3_vector **multi_x, int action){
     free(linkcopyTUP);
     free(momentumcopy);
 #else
+    node0_printf("restore device gauge\n");
     qudaGaugeRestore();
 #endif
 
