@@ -87,6 +87,7 @@ void update_inner_pqpqp( Real tau, int steps, Real lambda, int q_inner) {
 void update_inner_fgi(Real tau, int steps){
   
 #ifdef FN
+  node0_printf("update_inner_fgi: invalidate_fermion_links\n");
   invalidate_fermion_links(fn_links);
 #endif
   
@@ -190,6 +191,7 @@ int force_gradient(Real eps_t, Real eps_ttt, su3_vector **multi_x, int action){
     int iters = 0;
 
 #ifdef FN
+    node0_printf("force_gradient: invalidate_fermion_links\n");
     invalidate_fermion_links(fn_links);
 #endif
 
@@ -221,7 +223,7 @@ int force_gradient(Real eps_t, Real eps_ttt, su3_vector **multi_x, int action){
     node0_printf("zero device momentum after making a copy\n");
     qudaMomZero();
     // make a copy of the gauge field on GPU
-    node0_printf("make a copy of gauge field on device\n");
+    node0_printf("MILC FGI QUDA: make a copy of gauge field on device\n");
     qudaGaugeCopy();
 #endif
 
@@ -244,9 +246,9 @@ int force_gradient(Real eps_t, Real eps_ttt, su3_vector **multi_x, int action){
 
     // restore the momentum so we can add our kick to it
 #ifndef HAVE_QUDA
-    node0_printf("restore device momentum\n");
     restore_momentum(momentumcopy);
 #else
+    node0_printf("MILC FGI QUDA: restore device momentum\n");
     qudaMomRestore();
 #endif
 
@@ -276,11 +278,9 @@ int force_gradient(Real eps_t, Real eps_ttt, su3_vector **multi_x, int action){
     free(linkcopyTUP);
     free(momentumcopy);
 #else
-    node0_printf("restore device gauge\n");
+    node0_printf("MILC FGI QUDA: restore device gauge\n");
     qudaGaugeRestore();
 #endif
-
-    
     return iters;
 }
 

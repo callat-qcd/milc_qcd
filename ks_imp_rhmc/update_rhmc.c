@@ -238,17 +238,17 @@ int update() {
       node0_printf("             default INNER_LAMBDA = %e\n", inner_lambda);            
     }
     if(getenv("INNER_STEPS")){
-      inner_steps = atof(strdup(getenv("INNER_STEPS")));
+      inner_steps = atoi(strdup(getenv("INNER_STEPS")));
       node0_printf("             ENV declared INNER_STEPS = %d\n", inner_steps);
     } else {
       inner_steps = 1;
       node0_printf("             default INNER_STEPS = %d\n", inner_steps);
     }
     if(getenv("Q_INNER")){
-      q_inner = atof(strdup(getenv("Q_INNER")));
+      q_inner = atoi(strdup(getenv("Q_INNER")));
       node0_printf("             ENV declared Q_INNER type = %d\n", q_inner);
     } else {
-      q_inner = 0;
+      q_inner = 2;
       node0_printf("             default Q_INNER type = %d\n", q_inner);
     }
     n_multi_x = max_rat_order;
@@ -275,7 +275,7 @@ int update() {
 	// This ENVAR governs the number of inner steps taken by a multi
 	// time scale integrator.
     if(getenv("INNER_STEPS")){
-      inner_steps = atof(strdup(getenv("INNER_STEPS")));
+      inner_steps = atoi(strdup(getenv("INNER_STEPS")));
       node0_printf("             ENV declared INNER_STEPS = %d\n", inner_steps);
     } else {
       inner_steps = 1;
@@ -287,10 +287,10 @@ int update() {
 	// Q_INNER = 2 : use the PQPQP integrator with INNER_STEPS inner steps.
 	// Q_INNER = 3 : use the FGI integrator with INNER_STEPS inner steps.
     if(getenv("Q_INNER")){
-      q_inner = atof(strdup(getenv("Q_INNER")));
+      q_inner = atoi(strdup(getenv("Q_INNER")));
       node0_printf("             ENV declared Q_INNER type = %d\n", q_inner);
     } else {
-      q_inner = 0;
+      q_inner = 3;
       node0_printf("             default Q_INNER type = %d\n", q_inner);
     }
     n_multi_x = max_rat_order;
