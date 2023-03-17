@@ -201,7 +201,7 @@ int force_gradient(Real eps_t, Real eps_ttt, su3_vector **multi_x, int action){
       terminate(1);
     }
     
-#ifndef HAVE_QUDA // CPU field copies
+
     // allocate memory for gauge field copy
     su3_matrix *linkcopyXUP, *linkcopyYUP, *linkcopyZUP, *linkcopyTUP;
     linkcopyXUP = malloc(sizeof(su3_matrix)*sites_on_node);
@@ -218,15 +218,14 @@ int force_gradient(Real eps_t, Real eps_ttt, su3_vector **multi_x, int action){
     //Make a copy of the momentum field and then zero it out
     copy_momentum(momentumcopy);
     zero_momentum();
-#else // have GPU copy the gauge and momentum fields
+#ifdef HAVE_QUDA 
     // make a copy and zero the momentum on GPU
-    node0_printf("zero device momentum after making a copy\n");
+    node0_printf("MILC FGI QUDA: zero device momentum after making a copy\n");
     qudaMomZero();
     // make a copy of the gauge field on GPU
     node0_printf("MILC FGI QUDA: make a copy of gauge field on device\n");
     qudaGaugeCopy();
 #endif
-
     // ultimately, we shift by p * dt * (1-2lam)
     // so, the dt**3 shift, since it is added to p, should be normalized by
     // 1 / (dt (1-2lam))
@@ -245,13 +244,11 @@ int force_gradient(Real eps_t, Real eps_ttt, su3_vector **multi_x, int action){
     update_u( 1.0 );
 
     // restore the momentum so we can add our kick to it
-#ifndef HAVE_QUDA
     restore_momentum(momentumcopy);
-#else
+#ifdef HAVE_QUDA
     node0_printf("MILC FGI QUDA: restore device momentum\n");
     qudaMomRestore();
-#endif
-
+#endif    
     // add our kick to the momentum
     // eps_t = dt * (1-2lam)
     // DMH because we restore the gauge field, we can write a thinner
@@ -268,7 +265,6 @@ int force_gradient(Real eps_t, Real eps_ttt, su3_vector **multi_x, int action){
     }
 
     // restore the gauge field
-#ifndef HAVE_QUDA
     restore_gauge_field(linkcopyXUP, linkcopyYUP, linkcopyZUP, linkcopyTUP);
 
     // free the memory
@@ -277,7 +273,7 @@ int force_gradient(Real eps_t, Real eps_ttt, su3_vector **multi_x, int action){
     free(linkcopyZUP);
     free(linkcopyTUP);
     free(momentumcopy);
-#else
+#ifdef HAVE_QUDA
     node0_printf("MILC FGI QUDA: restore device gauge\n");
     qudaGaugeRestore();
 #endif
