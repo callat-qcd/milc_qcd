@@ -6,6 +6,9 @@
 
  *  A.W-L. 12/18 Added 5G1F and 6G1F
 
+ *  Dean Howarth (D.H.) and Andre Walker-Loud (A.W-L.) added Force-Gradient-Integrator
+    that works with and without QUDA
+
  Update lattice by a molecular dynamics trajectory.
  Contains a selection of integration algorithms
 
@@ -258,22 +261,13 @@ int update() {
 
   case INT_FGI_PQPQP:
     node0_printf("FGI PQPQP Integrator: steps= %d eps= %e\n", steps, epsilon);
-    if(getenv("OUTER_LAMBDA")) {
-      outer_lambda = atof(strdup(getenv("OUTER_LAMBDA")));
-      node0_printf("             ENV declared OUTER_LAMBDA = %e\n", outer_lambda);
-    } else {
-      outer_lambda = 1./6; // this eliminates the (1 - 6 lam) {T,{S,{T}} dt**2 term
-      node0_printf("             default OUTER_LAMBDA = %e\n", outer_lambda);
-    }
-    if(getenv("INNER_LAMBDA")){
-      inner_lambda = atof(strdup(getenv("INNER_LAMBDA")));
-      node0_printf("             ENV declared INNER_LAMBDA = %e\n", inner_lambda);
-    } else {
-      inner_lambda = 1./6;
-      node0_printf("             default INNER_LAMBDA = %e\n", inner_lambda);            
-    }
+    // for FGI to work, we want outer and inner lambda = 1/6
+    outer_lambda = 1./6;
+    inner_lambda = 1./6;
+
 	// This ENVAR governs the number of inner steps taken by a multi
 	// time scale integrator.
+    node0_printf("             INNER gauge steps per fermion step\n");
     if(getenv("INNER_STEPS")){
       inner_steps = atoi(strdup(getenv("INNER_STEPS")));
       node0_printf("             ENV declared INNER_STEPS = %d\n", inner_steps);
@@ -281,6 +275,7 @@ int update() {
       inner_steps = 1;
       node0_printf("             default INNER_STEPS = %d\n", inner_steps);
     }
+
 	// This ENVAR governs which gauge integrator to use:
 	// Q_INNER = 0 : use the simple single time step Q integrator.
 	// Q_INNER = 1 : use the PQP integrator.

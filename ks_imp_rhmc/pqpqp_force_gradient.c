@@ -2,7 +2,8 @@
 /* MIMD version 7 */
 /* Define functions that are useful for PQPQP and QPQPQ and
    force-gradient integration                              */
-/* A.W-L. - adding integrators 08/2021 
+/* 03/2023   
+   Dean Howarth (DMH) + Andre Walker-Loud (AWL) getting FGI to work with MILC and MILC+QUDA
  */
 
 #include "ks_imp_includes.h"    /* definitions files and prototypes */
@@ -256,9 +257,9 @@ int force_gradient(Real eps_t, Real eps_ttt, su3_vector **multi_x, int action){
     // just the momenta and fermions. However, given the speed with which
     // gauge updates are performed, it's likely to not give any significant
     // speed-up.
-    if(action == 0)               update_h_gauge(   eps_t);
+    if(action == 0)               update_h_gauge  ( eps_t);
     else if(action == 1) iters += update_h_fermion( eps_t, multi_x);
-    else if(action == 2) iters += update_h_rhmc(    eps_t, multi_x);
+    else if(action == 2) iters += update_h_rhmc   ( eps_t, multi_x);
     else {
       node0_printf("The action must be 0 (gauge), 1 (ferm) or 2 (rhmc)\n");
       terminate(1);
